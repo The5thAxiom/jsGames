@@ -4,3 +4,6 @@
 - [The colour theme used](https://www.nordtheme.com/)
 - This is a simple brick-breaking game made by following a tutorial.
 - Made to learn basic javascript, using canvases, animating stuff and such.
+## Tic Tac Toe
+- A very basic tic-tac-toe game using html and js.
+- The code **will** be a mess, _be warned_!
