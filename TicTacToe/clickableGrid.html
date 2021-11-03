@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>clickable grid</title>
+</head>
+<style>
+    #game-box {
+        display: grid;
+        grid-template-columns: 100px 100px 100px;
+        grid-template-rows: 100px 100px 100px;
+        grid-gap: 10px;
+    }
+    
+    .square {
+        background-color: blue;
+        color: white;
+        font-size: xx-large;
+        text-align: center;
+    }
+</style>
+
+<body>
+    <h1> Tic Tac Toe </h1>
+    <div id="game-box">
+        <div id="top-left" class="square"></div>
+        <div id="top-centre" class="square"></div>
+        <div id="top-right" class="square"></div>
+        <div id="mid-left" class="square"></div>
+        <div id="mid-centre" class="square"></div>
+        <div id="mid-right" class="square"></div>
+        <div id="bottom-left" class="square"></div>
+        <div id="bottom-centre" class="square"></div>
+        <div id="bottom-right" class="square"></div>
+    </div>
+</body>
+<script>
+    // let topLeft = document.getElementById("top-left");
+    // let topCentre = document.getElementById("top-centre");
+    // let topRight = document.getElementById("top-right");
+
+    // let midLeft = document.getElementById("mid-left");
+    // let midCentre = document.getElementById("mid-centre");
+    // let midRight = document.getElementById("mid-right");
+
+    // let bottomLeft = document.getElementById("bottom-left");
+    // let bottomCentre = document.getElementById("bottom-centre");
+    // let bottomRight = document.getElementById("bottom-right");
+
+    let counter = 0;
+    let symbol = counter % 2 == 0 ? "X" : "O";
+
+    let squares = document.getElementsByClassName("square");
+    for (let square of squares) {
+        square.addEventListener('click', function() {
+            square.innerHTML = symbol;
+            counter++;
+            symbol = counter % 2 == 0 ? "X" : "O";
+        })
+    }
+</script>
+
+</html>
