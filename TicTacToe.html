@@ -2,11 +2,11 @@
 <html>
 
 <head>
-    <title>clickable grid</title>
+    <title>jsGames &gt; TicTacToe</title>
 </head>
 <style>
     #game-box {
-        display: grid;
+        display: none;
         grid-template-columns: 100px 100px 100px;
         grid-template-rows: 100px 100px 100px;
         grid-gap: 10px;
@@ -37,6 +37,12 @@
 </body>
 
 <script>
+    // global variables
+
+    // the counter keeps track of the number of squares clicked
+    let COUNTER = 0;
+
+    // squares
     const topLeft = document.getElementById("top-left");
     const topCentre = document.getElementById("top-centre");
     const topRight = document.getElementById("top-right");
@@ -48,6 +54,9 @@
     const bottomLeft = document.getElementById("bottom-left");
     const bottomCentre = document.getElementById("bottom-centre");
     const bottomRight = document.getElementById("bottom-right");
+
+    //----------------------------------------------------------------
+    // functions
 
     gameOver = function() {
         if (
@@ -94,20 +103,24 @@
     }
 
     newGame = function() {
+        document.getElementById("game-box").style = "display: grid;";
         console.log("new game")
-        counter = 0;
+        COUNTER = 0;
         for (let square of document.getElementsByClassName("square"))
             square.innerHTML = "";
     }
 
-    let counter = 0;
+    //----------------------------------------------------------------
+    // Event Listeners
 
+    // when a square is clicked
     for (let square of document.getElementsByClassName("square"))
         square.addEventListener('click', function() {
+            // if the square has not been clicked
             if (this.innerHTML == "") {
                 console.log(this.id)
-                this.innerHTML = counter % 2 == 0 ? "X" : "O";
-                counter++;
+                this.innerHTML = COUNTER % 2 == 0 ? "X" : "O";
+                COUNTER++;
                 if (gameOver() == true) {
                     console.log("game over!")
                     window.alert(this.innerHTML + " wins!!!");
@@ -116,6 +129,7 @@
             }
         })
 
+    // when the new game button is clicked
     document.getElementById("new-game").addEventListener("click", newGame);
 </script>
 
