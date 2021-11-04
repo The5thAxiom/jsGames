@@ -22,6 +22,7 @@
 
 <body>
     <h1> Tic Tac Toe </h1>
+    <button id="new-game">New Game</button>
     <div id="game-box">
         <div id="top-left" class="square"></div>
         <div id="top-centre" class="square"></div>
@@ -34,30 +35,88 @@
         <div id="bottom-right" class="square"></div>
     </div>
 </body>
+
 <script>
-    // let topLeft = document.getElementById("top-left");
-    // let topCentre = document.getElementById("top-centre");
-    // let topRight = document.getElementById("top-right");
+    const topLeft = document.getElementById("top-left");
+    const topCentre = document.getElementById("top-centre");
+    const topRight = document.getElementById("top-right");
 
-    // let midLeft = document.getElementById("mid-left");
-    // let midCentre = document.getElementById("mid-centre");
-    // let midRight = document.getElementById("mid-right");
+    const midLeft = document.getElementById("mid-left");
+    const midCentre = document.getElementById("mid-centre");
+    const midRight = document.getElementById("mid-right");
 
-    // let bottomLeft = document.getElementById("bottom-left");
-    // let bottomCentre = document.getElementById("bottom-centre");
-    // let bottomRight = document.getElementById("bottom-right");
+    const bottomLeft = document.getElementById("bottom-left");
+    const bottomCentre = document.getElementById("bottom-centre");
+    const bottomRight = document.getElementById("bottom-right");
+
+    gameOver = function() {
+        if (
+            (topLeft.innerHTML != "") &&
+            (topLeft.innerHTML == topCentre.innerHTML) &&
+            (topCentre.innerHTML == topRight.innerHTML)
+        ) return true;
+        else if (
+            (midLeft.innerHTML != "") &&
+            (midLeft.innerHTML == midCentre.innerHTML) &&
+            (midCentre.innerHTML == midRight.innerHTML)
+        ) return true;
+        else if (
+            (bottomLeft.innerHTML != "") &&
+            (bottomLeft.innerHTML == bottomCentre.innerHTML) &&
+            (bottomCentre.innerHTML == bottomRight.innerHTML)
+        ) return true;
+        else if (
+            (topLeft.innerHTML != "") &&
+            (topLeft.innerHTML == midLeft.innerHTML) &&
+            (midLeft.innerHTML == bottomLeft.innerHTML)
+        ) return true;
+        else if (
+            (topCentre.innerHTML != "") &&
+            (topCentre.innerHTML == midCentre.innerHTML) &&
+            (midCentre.innerHTML == bottomCentre.innerHTML)
+        ) return true;
+        else if (
+            (topRight.innerHTML != "") &&
+            (topRight.innerHTML == midRight.innerHTML) &&
+            (midRight.innerHTML == bottomRight.innerHTML)
+        ) return true;
+        else if (
+            (topLeft.innerHTML != "") &&
+            (topLeft.innerHTML == midCentre.innerHTML) &&
+            (midCentre.innerHTML == bottomRight.innerHTML)
+        ) return true;
+        else if (
+            (topRight.innerHTML != "") &&
+            (topRight.innerHTML == midCentre.innerHTML) &&
+            (midCentre.innerHTML == bottomLeft.innerHTML)
+        ) return true;
+        else return false;
+    }
+
+    newGame = function() {
+        console.log("new game")
+        counter = 0;
+        for (let square of document.getElementsByClassName("square"))
+            square.innerHTML = "";
+    }
 
     let counter = 0;
-    let symbol = counter % 2 == 0 ? "X" : "O";
 
-    let squares = document.getElementsByClassName("square");
-    for (let square of squares) {
+    for (let square of document.getElementsByClassName("square"))
         square.addEventListener('click', function() {
-            square.innerHTML = symbol;
-            counter++;
-            symbol = counter % 2 == 0 ? "X" : "O";
+            if (this.innerHTML == "") {
+                console.log(this.id)
+                this.innerHTML = counter % 2 == 0 ? "X" : "O";
+                counter++;
+                if (gameOver() == true) {
+                    console.log("game over!")
+                    window.alert(this.innerHTML + " wins!!!");
+                    newGame();
+                }
+            }
         })
-    }
+
+    document.getElementById("new-game").addEventListener("click", newGame);
 </script>
 
 </html>
