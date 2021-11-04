@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>jsGames &gt; RockPaperScissors</title>
+</head>
+<style>
+    #game-box {
+        display: none;
+        grid-template-columns: 100px 100px 100px;
+        gap: 20px;
+    }
+    
+    .square {
+        background-color: blue;
+        color: white;
+        padding: 20px;
+    }
+    
+    .choice-line {
+        display: none;
+    }
+    
+    .clickable {
+        user-select: none;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <h1> Rock Paper Scissors </h1>
+    <button id="new-game" class="clickable">New Game</button>
+    <h2>
+        Computer: <span id="computer-score">0</span>
+        <br> User: <span id="user-score">0</span>
+    </h2>
+    <div id="game-box">
+        <div id="rock" class="square clickable">Rock</div>
+        <div id="paper" class="square clickable">Paper</div>
+        <div id="scissors" class="square clickable">Scissors</div>
+    </div>
+    <h2 id="user-says" class="choice-line">User: <span id="user-choice"></span></h2><br>
+    <h2 id="computer-says" class="choice-line">Computer: <span id="computer-choice"></span></h2>
+</body>
+
+<script>
+    // global variables
+
+    // score counters
+    let COMPUTER_SCORE = 0;
+    let USER_SCORE = 0;
+
+    // Possible computer choices
+    const COMPUTER_CHOICES = ["Rock", "Paper", "Scissors"]
+
+    // elements
+    let USER_SAYS = document.getElementById("user-says");
+    let COMPUTER_SAYS = document.getElementById("computer-says");
+
+    // squares
+    const ROCK = document.getElementById("rock");
+    const PAPER = document.getElementById("paper");
+    const SCISSORS = document.getElementById("scissors");
+
+    //----------------------------------------------------------------
+    // functions
+
+    function newGame() {
+        // make the game visible
+        document.getElementById("game-box").style = "display: grid;";
+
+        // initialize the scores
+        COMPUTER_SCORE = 0;
+        USER_SCORE = 0;
+
+        // update the scores on the screen
+        document.getElementById("computer-score").innerHTML = COMPUTER_SCORE;
+        document.getElementById("user-score").innerHTML = USER_SCORE;
+
+        // hide the choice lines
+        COMPUTER_SAYS.style = "display: none;"
+        USER_SAYS.style = "display: none"
+    }
+
+    //----------------------------------------------------------------
+    // Event Listeners
+
+    // when a square is clicked
+    for (let square of document.getElementsByClassName("square"))
+        square.addEventListener('click', function() {
+            // getting the user's choice
+            const userChoice = this.id.charAt(0).toUpperCase() + this.id.substr(1); // capitalizing the first letter
+            console.log("User: " + userChoice);
+
+            // getting the computer's choice randomly
+            const computerChoice = COMPUTER_CHOICES[Math.floor(Math.random() * 3)];
+            console.log("Computer: " + computerChoice);
+
+            // showing the two choices on the screen
+            COMPUTER_SAYS.style = "display: inline;";
+            USER_SAYS.style = "display: inline;";
+            document.getElementById("computer-choice").innerHTML = computerChoice;
+            document.getElementById("user-choice").innerHTML = userChoice;
+
+            // see who won and update the score
+            if (userChoice == "Rock") {
+                if (computerChoice == "Paper") COMPUTER_SCORE++;
+                else if (computerChoice == "Scissors") USER_SCORE++;
+            } else if (userChoice == "Paper") {
+                if (computerChoice == "Rock") USER_SCORE++;
+                else if (computerChoice == "Scissors") COMPUTER_SCORE++;
+            } else if (userChoice == "Scissors") {
+                if (computerChoice == "Rock") COMPUTER_SCORE++;
+                else if (computerChoice == "Paper") USER_SCORE++;
+            } else console.log("Daya, kuch to gadbad hai");
+
+            // update the score on the screen
+            document.getElementById("computer-score").innerHTML = COMPUTER_SCORE;
+            document.getElementById("user-score").innerHTML = USER_SCORE;
+        })
+
+    // when the new game button is clicked
+    document.getElementById("new-game").addEventListener("click", newGame);
+</script>
+
+</html>
