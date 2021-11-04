@@ -6,3 +6,5 @@
 - Made to learn basic javascript, using canvases, animating stuff and such.
 ## Tic Tac Toe
 - A very basic tic-tac-toe game using html and js.
+## Rock Paper Scissors
+- A classic.
