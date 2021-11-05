@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+</head>
+
+<style>
+    .player-box {
+        display: grid;
+        grid-template-rows: auto auto;
+        grid-template-columns: auto auto auto;
+        background-color: lightsteelblue;
+        outline: 2px;
+        outline-color: black;
+        outline-style: solid;
+    }
+    
+    .player-name {
+        grid-column: 1 / span 2;
+    }
+    
+    .card-image {
+        display: block;
+        background-color: steelblue;
+    }
+    
+    .card-image:hover {
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <h1>Ninety-Nine</h1>
+    <button id="new-game-button">New Game</button>
+    <h2>Total: <span id="on-screen-total"></span></h2>
+    <h2>Direction: <span id="on-screen-direction"></span></h2>
+    <div id="p1-box" class="player-box" style="display: none;">
+        <p id="p1-name" class="player-name"></p>
+        <p id="p1-lives" class="player-lives"></p>
+        <img id="p1-c1" class="card-image"></img>
+        <img id="p1-c2" class="card-image"></img>
+        <img id="p1-c3" class="card-image"></img>
+    </div>
+    <div id="p2-box" class="player-box" style="display: none;">
+        <p id="p2-name" class="player-name"></p>
+        <p id="p2-lives" class="player-lives"></p>
+        <img id="p2-c1" class="card-image"></img>
+        <img id="p2-c2" class="card-image"></img>
+        <img id="p2-c3" class="card-image"></img>
+    </div>
+    <div id="p3-box" class="player-box" style="display: none;">
+        <p id="p3-name" class="player-name"></p>
+        <p id="p3-lives" class="player-lives"></p>
+        <img id="p3-c1" class="card-image"></img>
+        <img id="p3-c2" class="card-image"></img>
+        <img id="p3-c3" class="card-image"></img>
+    </div>
+    Made with ❤ by <a href="https://github.com/The5thAxiom">Sam</a>
+</body>
+
+<script>
+    // Array Remove - By John Resig (MIT Licensed)
+    Array.prototype.remove = function(from, to) {
+            var rest = this.slice((to || from) + 1 || this.length);
+            this.length = from < 0 ? this.length + from : from;
+            return this.push.apply(this, rest);
+        }
+        // display: none
+        // The game
+    function getRandom(num) {
+        return Math.floor(Math.random() * num);
+    }
+
+    let state = {
+        allCards: [{
+                path: "playing-cards-assets/svg-cards/10_of_clubs.svg",
+                name: "The 10 of Clubs",
+                type: "10"
+            }, {
+                path: "playing-cards-assets/svg-cards/10_of_diamonds.svg",
+                name: "The 10 of Diamonds",
+                type: "10"
+            }, {
+                path: "playing-cards-assets/svg-cards/10_of_hearts.svg",
+                name: "The 10 of Hearts",
+                type: "10"
+            }, {
+                path: "playing-cards-assets/svg-cards/10_of_spades.svg",
+                name: "The 10 of Spades",
+                type: "10"
+            }, {
+                path: "playing-cards-assets/svg-cards/2_of_clubs.svg",
+                name: "The 2 of Clubs",
+                type: "2"
+            }, {
+                path: "playing-cards-assets/svg-cards/2_of_diamonds.svg",
+                name: "The 2 of Diamonds",
+                type: "2"
+            }, {
+                path: "playing-cards-assets/svg-cards/2_of_hearts.svg",
+                name: "The 2 of Hearts",
+                type: "2"
+            }, {
+                path: "playing-cards-assets/svg-cards/2_of_spades.svg",
+                name: "The 2 of Spades",
+                type: "2"
+            }, {
+                path: "playing-cards-assets/svg-cards/3_of_clubs.svg",
+                name: "The 3 of Clubs",
+                type: "3"
+            }, {
+                path: "playing-cards-assets/svg-cards/3_of_diamonds.svg",
+                name: "The 3 of diamonds",
+                type: "3"
+            }, {
+                path: "playing-cards-assets/svg-cards/3_of_hearts.svg",
+                name: "The 3 of Hearts",
+                type: "3"
+            }, {
+                path: "playing-cards-assets/svg-cards/3_of_spades.svg",
+                name: "The 3 of Spades",
+                type: "3"
+            }, {
+                path: "playing-cards-assets/svg-cards/4_of_clubs.svg",
+                name: "The 4 of Clubs",
+                type: "4"
+            }, {
+                path: "playing-cards-assets/svg-cards/4_of_diamonds.svg",
+                name: "The 4 of Diamonds",
+                type: "4"
+            }, {
+                path: "playing-cards-assets/svg-cards/4_of_hearts.svg",
+                name: "The 4 of Hearts",
+                type: "4"
+            }, {
+                path: "playing-cards-assets/svg-cards/4_of_spades.svg",
+                name: "The 4 of Spades",
+                type: "4"
+            }, {
+                path: "playing-cards-assets/svg-cards/5_of_clubs.svg",
+                name: "The 5 of Clubs",
+                type: "5"
+            }, {
+                path: "playing-cards-assets/svg-cards/5_of_diamonds.svg",
+                name: "The 5 of Diamonds",
+                type: "5"
+            }, {
+                path: "playing-cards-assets/svg-cards/5_of_hearts.svg",
+                name: "The 5 of Hearts",
+                type: "5"
+            }, {
+                path: "playing-cards-assets/svg-cards/5_of_spades.svg",
+                name: "The 5 of Spades",
+                type: "5"
+            }, {
+                path: "playing-cards-assets/svg-cards/6_of_clubs.svg",
+                name: "The 6 of Clubs",
+                type: "6"
+            }, {
+                path: "playing-cards-assets/svg-cards/6_of_diamonds.svg",
+                name: "The 6 of Diamonds",
+                type: "6"
+            }, {
+                path: "playing-cards-assets/svg-cards/6_of_hearts.svg",
+                name: "The 6 of Hearts",
+                type: "6"
+            }, {
+                path: "playing-cards-assets/svg-cards/6_of_spades.svg",
+                name: "The 6 of Spades",
+                type: "6"
+            }, {
+                path: "playing-cards-assets/svg-cards/7_of_clubs.svg",
+                name: "The 7 of Clubs",
+                type: "7"
+            }, {
+                path: "playing-cards-assets/svg-cards/7_of_diamonds.svg",
+                name: "The 7 of Diamonds",
+                type: "7"
+            }, {
+                path: "playing-cards-assets/svg-cards/7_of_hearts.svg",
+                name: "The 7 of Hearts",
+                type: "7"
+            }, {
+                path: "playing-cards-assets/svg-cards/7_of_spades.svg",
+                name: "The 7 of Spades",
+                type: "7"
+            }, {
+                path: "playing-cards-assets/svg-cards/8_of_clubs.svg",
+                name: "The 8 of Clubs",
+                type: "8"
+            }, {
+                path: "playing-cards-assets/svg-cards/8_of_diamonds.svg",
+                name: "The 8 of Diamonds",
+                type: "8"
+            }, {
+                path: "playing-cards-assets/svg-cards/8_of_hearts.svg",
+                name: "The 8 of Hearts",
+                type: "8"
+            }, {
+                path: "playing-cards-assets/svg-cards/8_of_spades.svg",
+                name: "The 8 of Spades",
+                type: "8"
+            }, {
+                path: "playing-cards-assets/svg-cards/9_of_clubs.svg",
+                name: "The 9 of Clubs",
+                type: "9"
+            }, {
+                path: "playing-cards-assets/svg-cards/9_of_diamonds.svg",
+                name: "The 9 of Diamonds",
+                type: "9"
+            }, {
+                path: "playing-cards-assets/svg-cards/9_of_hearts.svg",
+                name: "The 9 of Hearts",
+                type: "9"
+            }, {
+                path: "playing-cards-assets/svg-cards/9_of_spades.svg",
+                name: "The 9 of Spades",
+                type: "9"
+            }, {
+                path: "playing-cards-assets/svg-cards/ace_of_clubs.svg",
+                name: "The Ace of Clubs",
+                type: "A"
+            }, {
+                path: "playing-cards-assets/svg-cards/ace_of_diamonds.svg",
+                name: "The Ace of Diamonds",
+                type: "A"
+            }, {
+                path: "playing-cards-assets/svg-cards/ace_of_hearts.svg",
+                name: "The Ace of Hearts",
+                type: "A"
+            }, {
+                path: "playing-cards-assets/svg-cards/ace_of_spades.svg",
+                name: "The Ace of Spades",
+                type: "A"
+            },
+            /* {
+                       path: "playing-cards-assets/svg-cards/black_joker.svg",
+                       name: "The Black Joker",
+                       type: "Joker"
+                   },  */
+            {
+                path: "playing-cards-assets/svg-cards/jack_of_clubs.svg",
+                name: "The Jack of Clubs",
+                type: "J"
+            }, {
+                path: "playing-cards-assets/svg-cards/jack_of_diamonds.svg",
+                name: "The Jack of Diamonds",
+                type: "J"
+            }, {
+                path: "playing-cards-assets/svg-cards/jack_of_hearts.svg",
+                name: "The Jack of Hearts",
+                type: "J"
+            }, {
+                path: "playing-cards-assets/svg-cards/jack_of_spades.svg",
+                name: "The Jack of Spades",
+                type: "J"
+            }, {
+                path: "playing-cards-assets/svg-cards/king_of_clubs.svg",
+                name: "The King of Clubs",
+                type: "K"
+            }, {
+                path: "playing-cards-assets/svg-cards/king_of_diamonds.svg",
+                name: "The King of Diamonds",
+                type: "K"
+            }, {
+                path: "playing-cards-assets/svg-cards/king_of_hearts.svg",
+                name: "The King of Hearts",
+                type: "K"
+            }, {
+                path: "playing-cards-assets/svg-cards/king_of_spades.svg",
+                name: "The King of Spades",
+                type: "K"
+            }, {
+                path: "playing-cards-assets/svg-cards/queen_of_clubs.svg",
+                name: "The Queen of Clubs",
+                type: "Q"
+            }, {
+                path: "playing-cards-assets/svg-cards/queen_of_diamonds.svg",
+                name: "The Queen of Diamonds",
+                type: "Q"
+            }, {
+                path: "playing-cards-assets/svg-cards/queen_of_hearts.svg",
+                name: "The Queen of Hearts",
+                type: "Q"
+            }, {
+                path: "playing-cards-assets/svg-cards/queen_of_spades.svg",
+                name: "The Queen of Spades",
+                type: "Q"
+            },
+            /* {
+                       path: "playing-cards-assets/svg-cards/red_joker.svg",
+                       name: "The Red Joker",
+                       type: "Joker"
+                   } */
+        ],
+        drawPile: [],
+        pileTotal: 0,
+        pileTotalScreen: document.getElementById("on-screen-total"),
+        directionScreen: document.getElementById("on-screen-direction"),
+        direction: 1,
+        newDrawPile: function() {
+            this.drawPile = Array.from(this.allCards);
+        },
+        getCard: function() {
+            let num = getRandom(this.drawPile.length);
+            let card = this.drawPile[num];
+            this.drawPile.remove(num);
+            return card;
+        },
+        setDownOrder: function() {
+            this.directionScreen.innerHTML = "Down";
+            p1.next = p2;
+            p2.next = p3;
+            p3.next = p1;
+        },
+        setUpOrder: function() {
+            this.directionScreen.innerHTML = "Up";
+            p1.next = p3;
+            p2.next = p1;
+            p3.next = p2;
+        },
+        newGame: function() {
+            console.log("New Game!");
+            this.drawPile = [];
+            this.newDrawPile();
+            this.pileTotal = 0;
+            this.pileTotalScreen.innerHTML = state.pileTotal;
+            this.direction = 1;
+            this.setDownOrder();
+            p1.setAll();
+            p2.setAll();
+            p3.setAll();
+        },
+        setNext: function(player) {
+            player.turn = false;
+            player.boxScreen.style = "display: none;";
+            player.next.turn = true;
+            player.next.boxScreen.style = "display: grid;";
+
+            /*This is the code which causes problems*/
+            // if (player.next.lives > 0) {
+            //     player.next.turn = true;
+            //     player.next.boxScreen.style = "display: grid;";
+            // } else {
+            //     player.next = player.next.next;
+            //     player.next.boxScreen.style = "display: grid;";
+            // }
+        },
+        CardClick: function(player, ClickedCard) {
+            console.log(player.name + "(" + player.lives + "): " + ClickedCard.card.type);
+            switch (ClickedCard.card.type) {
+                case "K":
+                    this.pileTotal = 99;
+                    break;
+                case "Q":
+                    this.pileTotal += 10;
+                    break;
+                case "J":
+                    this.pileTotal += 10;
+                    break;
+                case "10":
+                    this.pileTotal -= 10;
+                    break;
+                case "9":
+                    break;
+                case "8":
+                    this.pileTotal += 8;
+                    break;
+                case "7":
+                    this.pileTotal += 7;
+                    break;
+                case "6":
+                    this.pileTotal += 6;
+                    break;
+                case "5":
+                    this.pileTotal += 5;
+                    break;
+                case "4":
+                    this.direction *= -1;
+                    break;
+                case "3":
+                    this.pileTotal += 3;
+                    break;
+                case "2":
+                    this.pileTotal += 2;
+                    break;
+                case "A":
+                    this.pileTotal += 1; // add the option for 11 later
+                    break;
+                case "Joker":
+                    this.pileTotal = 0;
+                    break;
+                default:
+                    window.alert("sahi se nahi kiye switch statement tum!")
+                    break;
+            }
+
+            // in case of exceeding 99
+            if (this.pileTotal > 99) {
+                window.alert(player.name + " lost a life!");
+                console.log(player.name + " lost a life!");
+                player.lives--;
+                this.newGame();
+                return;
+            } else {
+                // change the total on the screen
+                this.pileTotalScreen.innerHTML = this.pileTotal;
+
+                // set the direction
+                if (this.direction == 1) this.setDownOrder();
+                else this.setUpOrder();
+
+                // put the card back into the draw pile and deal a new card to the player
+                this.drawPile.push(ClickedCard.card);
+                ClickedCard.card = this.getCard();
+                ClickedCard.element.src = ClickedCard.card.path;
+
+                // the next player has the turn now
+                this.setNext(player);
+            }
+        }
+    }
+
+    let p1 = {
+        boxScreen: document.getElementById("p1-box"),
+        nameScreen: document.getElementById("p1-name"),
+        livesScreen: document.getElementById("p1-lives"),
+        name: "Samridh",
+        lives: 3,
+        turn: true,
+        next: null,
+        c1: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p1-c1")
+        },
+        c2: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p1-c2")
+        },
+        c3: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p1-c3")
+        },
+        setAll: function() {
+            this.c1.card = state.getCard();
+            this.c2.card = state.getCard();
+            this.c3.card = state.getCard();
+            this.c1.element.src = this.c1.card.path;
+            this.c1.element.addEventListener("click", function() {
+                state.CardClick(p1, p1.c1)
+            });
+            this.c2.element.src = this.c2.card.path;
+            this.c2.element.addEventListener("click", function() {
+                state.CardClick(p1, p1.c2)
+            });
+            this.c3.element.src = this.c3.card.path;
+            this.c3.element.addEventListener("click", function() {
+                state.CardClick(p1, p1.c3)
+            });
+            this.nameScreen.innerHTML = this.name;
+            this.livesScreen.innerHTML = "❤".repeat(this.lives);
+            this.turn = true;
+            if (this.turn) this.boxScreen.style = "display: grid;";
+            else this.boxScreen.style = "displapy: none;";
+        }
+    }
+
+    let p2 = {
+        boxScreen: document.getElementById("p2-box"),
+        nameScreen: document.getElementById("p2-name"),
+        livesScreen: document.getElementById("p2-lives"),
+        name: "Himanshi",
+        lives: 3,
+        turn: false,
+        next: null,
+        c1: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p2-c1")
+        },
+        c2: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p2-c2")
+        },
+        c3: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p2-c3")
+        },
+        setAll: function() {
+            this.c1.card = state.getCard();
+            this.c2.card = state.getCard();
+            this.c3.card = state.getCard();
+            this.c1.element.src = this.c1.card.path;
+            this.c1.element.addEventListener("click", function() {
+                state.CardClick(p2, p2.c1)
+            });
+            this.c2.element.src = this.c2.card.path;
+            this.c2.element.addEventListener("click", function() {
+                state.CardClick(p2, p2.c2)
+            });
+            this.c3.element.src = this.c3.card.path;
+            this.c3.element.addEventListener("click", function() {
+                state.CardClick(p2, p2.c3)
+            });
+            this.nameScreen.innerHTML = this.name;
+            this.livesScreen.innerHTML = "❤".repeat(this.lives);
+            this.turn = false;
+            if (this.turn) this.boxScreen.style = "display: grid;";
+            else this.boxScreen.style = "display: none;";
+        }
+    }
+
+    let p3 = {
+        boxScreen: document.getElementById("p3-box"),
+        nameScreen: document.getElementById("p3-name"),
+        livesScreen: document.getElementById("p3-lives"),
+        name: "Shlok",
+        lives: 3,
+        turn: false,
+        next: null,
+        c1: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p3-c1")
+        },
+        c2: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p3-c2")
+        },
+        c3: {
+            card: {
+                path: null,
+                name: null,
+                type: null
+            },
+            element: document.getElementById("p3-c3")
+        },
+        setAll: function() {
+            this.c1.card = state.getCard();
+            this.c2.card = state.getCard();
+            this.c3.card = state.getCard();
+            this.c1.element.src = this.c1.card.path;
+            this.c1.element.addEventListener("click", function() {
+                state.CardClick(p3, p3.c1)
+            });
+            this.c2.element.src = this.c2.card.path;
+            this.c2.element.addEventListener("click", function() {
+                state.CardClick(p3, p3.c2)
+            });
+            this.c3.element.src = this.c3.card.path;
+            this.c3.element.addEventListener("click", function() {
+                state.CardClick(p3, p3.c3)
+            });
+            this.nameScreen.innerHTML = this.name;
+            this.livesScreen.innerHTML = "❤".repeat(this.lives);
+            this.turn = false;
+            if (this.turn) this.boxScreen.style = "display: grid;";
+            else this.boxScreen.style = "display: none;";
+        }
+    }
+
+    let newButton = document.getElementById("new-game-button");
+    newButton.addEventListener("click", function() {
+        p1.lives = 3;
+        p2.lives = 3;
+        p3.lives = 3;
+        state.newGame();
+    });
+</script>
+
+</html>
