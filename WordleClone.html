@@ -7,6 +7,9 @@
         <title>Wordle Clone</title>
     </head>
     <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
         #game-box {
             display: flex;
             flex-direction: column;
@@ -18,11 +21,17 @@
         }
         .line > * {
             border: 1px solid;
-            min-height: 3em;
-            min-width: 3em;
+            min-height: 3rem;
+            min-width: 3rem;
+            font-size: 2rem;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
     <body>
+        <button id="new-game">New Game</button>
         <div id="game-box"></div>
     </body>
     <script>
@@ -30,33 +39,46 @@
         const gameBox = document.getElementById('game-box');
         let guesses = Array(6).fill('');
         let guessNo = 0;
+        let isDone = false;
+        let solution = '';
 
-        const makeBoxes = () => {
-            gameBox.innerHTML = guesses.reduce(
-                (t, g) =>
-                    `${t}<div class='line'>${
-                        g && g.length > 0
-                            ? Array.from(g.padEnd(6 - g.length, '.')).reduce(
-                                  (tt, gg) => `${tt}<div>${gg ? gg : ''}</div>`,
-                                  ''
-                              )
-                            : '<div></div>'.repeat(5)
-                    }</div>`,
-                ''
-            );
+        const makeNewGame = () => {
+            guesses = Array(6).fill('');
+            guessNo = 0;
+            isDone = false;
+            solution = words[Math.floor(Math.random() * words.length)];
+            makeBoxes();
+            console.log(solution);
         };
 
-        makeBoxes();
+        document.addEventListener('click', makeNewGame);
+
+        const makeBoxes = () => {
+            gameBox.innerHTML = guesses.reduce((t, g) => {
+                return `${t}<div class='line'>${
+                    g && g.length > 0
+                        ? Array.from(g.padEnd(5)).reduce(
+                              (tt, gg) => `${tt}<div>${gg ? gg : ''}</div>`,
+                              ''
+                          )
+                        : '<div></div>'.repeat(5)
+                }</div>`;
+            }, '');
+        };
+
+        makeNewGame();
 
         window.addEventListener('keydown', e => {
             if (
+                !isDone &&
                 (!guesses[guessNo] ||
                     (guesses[guessNo] && guesses[guessNo].length < 5)) &&
                 e.key.match('^[a-zA-z]$') !== null
             ) {
-                guesses[guessNo] += e.key;
+                guesses[guessNo] += e.key.toUpperCase();
                 console.log(e.key);
             } else if (
+                !isDone &&
                 guesses[guessNo] &&
                 guesses[guessNo].length <= 5 &&
                 guesses[guessNo].length > 0 &&
@@ -64,6 +86,7 @@
             ) {
                 guesses[guessNo] = guesses[guessNo].slice(0, -1);
             } else if (
+                !isDone &&
                 guesses[guessNo] &&
                 guesses[guessNo].length === 5 &&
                 e.key === 'Enter' &&
@@ -72,9 +95,11 @@
                 guessNo++;
             else if (e.key === 'Enter' && guessNo === 5) {
                 console.log('done!');
+                isDone = true;
             } else return;
             makeBoxes();
             console.log(guesses);
+            console.log(isDone);
         });
     </script>
 </html>
