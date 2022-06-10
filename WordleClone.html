@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Wordle Clone</title>
+    </head>
+    <style>
+        #game-box {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .line {
+            display: flex;
+            gap: 5px;
+        }
+        .line > * {
+            border: 1px solid;
+            min-height: 3em;
+            min-width: 3em;
+        }
+    </style>
+    <body>
+        <div id="game-box"></div>
+    </body>
+    <script>
+        const words = ['hello', 'world', 'trace'];
+        const gameBox = document.getElementById('game-box');
+        let guesses = Array(6).fill('');
+        let guessNo = 0;
+
+        const makeBoxes = () => {
+            gameBox.innerHTML = guesses.reduce(
+                (t, g) =>
+                    `${t}<div class='line'>${
+                        g && g.length > 0
+                            ? Array.from(g.padEnd(6 - g.length, '.')).reduce(
+                                  (tt, gg) => `${tt}<div>${gg ? gg : ''}</div>`,
+                                  ''
+                              )
+                            : '<div></div>'.repeat(5)
+                    }</div>`,
+                ''
+            );
+        };
+
+        makeBoxes();
+
+        window.addEventListener('keydown', e => {
+            if (
+                (!guesses[guessNo] ||
+                    (guesses[guessNo] && guesses[guessNo].length < 5)) &&
+                e.key.match('^[a-zA-z]$') !== null
+            ) {
+                guesses[guessNo] += e.key;
+                console.log(e.key);
+            } else if (
+                guesses[guessNo] &&
+                guesses[guessNo].length <= 5 &&
+                guesses[guessNo].length > 0 &&
+                e.key === 'Backspace'
+            ) {
+                guesses[guessNo] = guesses[guessNo].slice(0, -1);
+            } else if (
+                guesses[guessNo] &&
+                guesses[guessNo].length === 5 &&
+                e.key === 'Enter' &&
+                guessNo <= 4
+            )
+                guessNo++;
+            else if (e.key === 'Enter' && guessNo === 5) {
+                console.log('done!');
+            } else return;
+            makeBoxes();
+            console.log(guesses);
+        });
+    </script>
+</html>
