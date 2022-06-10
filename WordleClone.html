@@ -51,7 +51,9 @@
             console.log(solution);
         };
 
-        document.addEventListener('click', makeNewGame);
+        document
+            .getElementById('new-game')
+            .addEventListener('click', makeNewGame);
 
         const makeBoxes = () => {
             gameBox.innerHTML = guesses.reduce((t, g) => {
