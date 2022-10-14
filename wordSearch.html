@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Word Search</title>
+        <script>
+            const gridSize = 10;
+            const words = ['hello', 'spanish', 'travel'];
+
+            const randomInRange = n => Math.trunc(Math.random() * n);
+
+            const makeGrid = () => {
+                let grid = Array(gridSize).fill(Array(gridSize).fill('□'));
+
+                for (let w of words) {
+                    const y = randomInRange(gridSize - w.length);
+                }
+                // generate locations
+                const wordLocations = words.map(w => ({
+                    word: w,
+                    start: randomInRange(gridSize - w.length),
+                    orientation: 'h'
+                }));
+                console.log(wordLocations);
+
+                // fill the grid with empty spaces
+                return grid;
+            };
+
+            const newGame = () => {
+                const wordsList = document.getElementById('words');
+                const grid = document.getElementById('grid');
+
+                wordsList.innerHTML = `<ul>
+                    ${words.reduce(
+                        (prev, curr) => `${prev}<li>${curr}</li>`,
+                        ''
+                    )}
+                </ul>`;
+
+                const gridLetters = makeGrid();
+                grid.innerHTML = `<table>
+                    ${gridLetters.reduce(
+                        (prev, curr) => `${prev}
+                        <tr>${curr.reduce(
+                            (p, c) => `${p}<td>${c}</td>`,
+                            ''
+                        )}</tr>`,
+                        ''
+                    )}
+                </table>`;
+            };
+        </script>
+    </head>
+    <body>
+        <h1>Word Search</h1>
+        <button onclick="newGame()">New Game</button>
+        <h2>Words:</h2>
+        <div id="words"></div>
+        <h2>Grid:</h2>
+        <div id="grid"></div>
+    </body>
+</html>
