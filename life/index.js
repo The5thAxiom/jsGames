@@ -1,10 +1,11 @@
 class Grid {
-    constructor(canvas, height, width, cellSize) {
+    constructor(canvas, height, width, cellSize, frameRate = 250) {
         this.canvas = document.getElementById(canvas);
         this.ctx = this.canvas.getContext('2d');
         this.height = height;
         this.width = width;
         this.cellSize = cellSize;
+        this.frameRate = frameRate;
 
         this.loc = [];
         for (let i = 0; i < height; i++) {
@@ -18,6 +19,9 @@ class Grid {
         this.canvas.width = this.cellSize * this.width;
         this.canvas.style.height = this.cellSize * this.height;
         this.canvas.style.width = this.cellSize * this.width;
+
+        this.clear();
+        this.draw();
     }
     place(x, y, item) {
         for (let i = 0; i < item.length; i++) {
@@ -38,6 +42,9 @@ class Grid {
         }
         return count;
     }
+    clear() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+    }
     step() {
         let newLoc = [];
         for (let i = 0; i < this.height; i++) {
@@ -49,7 +56,6 @@ class Grid {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 const liveNeighbours = this.getLiveNeighbours(x, y);
-                // if (liveNeighbours > 0) console.log({ x, y, liveNeighbours });
                 if (
                     this.loc[y][x] &&
                     (liveNeighbours === 2 || liveNeighbours === 3)
@@ -74,17 +80,27 @@ class Grid {
             }
         }
     }
+    stop() {
+        this.isOn = false;
+    }
     start() {
+        this.isOn = true;
         this.draw();
         setTimeout(() => {
-            requestAnimationFrame(this.start.bind(this));
+            if (this.isOn) requestAnimationFrame(this.start.bind(this));
             this.step();
-        }, 250);
+        }, this.frameRate);
     }
 }
 
+let gameStarted = false;
+let grid;
+
 const newgame = () => {
-    const grid = new Grid('game-canvas-1', 50, 50, 10);
+    if (gameStarted) grid.stop();
+    gameStarted = true;
+    const frameRate = document.getElementById('frame-rate').valueAsNumber;
+    grid = new Grid('game-canvas-1', 50, 50, 10, frameRate);
     grid.place(0, 20, [
         [true, true],
         [true, true]
@@ -108,4 +124,29 @@ const newgame = () => {
         [false, true, false]
     ]);
     grid.start();
+};
+
+const toggleGame = () => {
+    const toggleGameButton = document.getElementById('play-pause-game');
+    if (grid.isOn) {
+        toggleGameButton.innerHTML = 'Play';
+        grid.stop();
+    } else {
+        toggleGameButton.innerHTML = 'Pause';
+        grid.start();
+    }
+};
+const stopGame = () => grid.isOn && grid.stop();
+const startGame = () => !grid.isOn && grid.start();
+const handleFrameRateChange = () => {
+    const setFrameRateButton = document.getElementById('set-framerate-button');
+    const frameRate = document.getElementById('frame-rate').valueAsNumber;
+    if (frameRate !== grid.frameRate)
+        setFrameRateButton.style.display = 'inline';
+};
+const setFrameRate = () => {
+    const frameRate = document.getElementById('frame-rate').valueAsNumber;
+    grid.frameRate = frameRate;
+    const setFrameRateButton = document.getElementById('set-framerate-button');
+    setFrameRateButton.style.display = 'none';
 };

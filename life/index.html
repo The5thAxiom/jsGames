@@ -9,7 +9,24 @@
     </head>
     <body>
         <h1>Conway's Game of Life</h1>
-        <button onclick="newgame()">New Game</button>
+        Framerate:
+        <input
+            id="frame-rate"
+            type="number"
+            step="1"
+            value="250"
+            min="0"
+            onchange="handleFrameRateChange()"
+        /><button
+            style="display: none"
+            onclick="setFrameRate()"
+            id="set-framerate-button"
+        >
+            Set Framerate
+        </button>
+        <br />
+        <button id="new-game" onclick="newgame()">New Game</button>
+        <button id="play-pause-game" onclick="toggleGame()">Pause</button>
         <div id="game-1"></div>
         <canvas id="game-canvas-1"></canvas>
     </body>
