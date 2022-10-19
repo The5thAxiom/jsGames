@@ -184,3 +184,25 @@ canvas.addEventListener('click', e => {
     grid.place(cellX, cellY, [[!grid.loc[cellY][cellX]]]);
     grid.draw();
 });
+
+let mouseIsOverCanvas = false;
+canvas.addEventListener('mouseenter', () => (mouseIsOverCanvas = true));
+canvas.addEventListener('mouseleave', () => (mouseIsOverCanvas = false));
+
+let prevLoc = { x: 0, y: 0 };
+canvas.addEventListener('mousemove', e => {
+    if (!gameStarted) return;
+    if (!mouseIsOverCanvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cellX = Number.parseInt(x / grid.cellSize);
+    const cellY = Number.parseInt(y / grid.cellSize);
+    if (prevLoc.x !== cellX || prevLoc.y != cellY)
+        if (e.buttons === 1) {
+            grid.place(cellX, cellY, [[true]]);
+            grid.draw();
+        }
+    prevLoc = { x: cellX, y: cellY };
+});
+
