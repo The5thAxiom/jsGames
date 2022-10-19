@@ -136,18 +136,30 @@ const newgame = () => {
 
 const toggleGame = () => {
     const toggleGameButton = document.getElementById('play-pause-game');
+    const stepGameButton = document.getElementById('step-game');
+
     if (grid.isOn) {
         toggleGameButton.innerHTML = 'Play';
         grid.stop();
+        stepGameButton.style.display = 'inline';
     } else {
         toggleGameButton.innerHTML = 'Pause';
         grid.start();
+        stepGameButton.style.display = 'none';
     }
 };
 const stopGame = () => grid.isOn && grid.stop();
 const startGame = () => {
     !grid.isOn && grid.start();
 };
+
+const stepGame = () => {
+    if (!grid.isOn) {
+        grid.step();
+        grid.draw();
+    }
+};
+
 const handleFrameRateChange = () => {
     const setFrameRateButton = document.getElementById('set-framerate-button');
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
