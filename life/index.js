@@ -24,11 +24,17 @@ class Grid {
         this.draw();
     }
     place(x, y, item) {
+        // let startLater = false;
+        // if (this.isOn) {
+        //     this.stop();
+        //     startLater = true;
+        // }
         for (let i = 0; i < item.length; i++) {
             for (let j = 0; j < item[i].length; j++) {
                 this.loc[i + y][j + x] = item[i][j];
             }
         }
+        // if (startLater) this.start();
     }
     getLiveNeighbours(x, y) {
         let count = 0;
@@ -87,8 +93,10 @@ class Grid {
         this.isOn = true;
         this.draw();
         setTimeout(() => {
-            if (this.isOn) requestAnimationFrame(this.start.bind(this));
-            this.step();
+            if (this.isOn) {
+                requestAnimationFrame(this.start.bind(this));
+                this.step();
+            }
         }, this.frameRate);
     }
 }
@@ -101,29 +109,29 @@ const newgame = () => {
     gameStarted = true;
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
     grid = new Grid('game-canvas-1', 50, 50, 10, frameRate);
-    grid.place(0, 20, [
-        [true, true],
-        [true, true]
-    ]);
-    grid.place(20, 10, [[true, true, true]]);
-    grid.place(1, 1, [
-        [false, true, false],
-        [false, false, true],
-        [true, true, true]
-    ]);
-    grid.place(30, 30, [
-        [false, true, false],
-        [false, true, false],
-        [true, false, true],
-        [false, true, false],
-        [false, true, false],
-        [false, true, false],
-        [false, true, false],
-        [true, false, true],
-        [false, true, false],
-        [false, true, false]
-    ]);
-    grid.start();
+    document.getElementById('play-pause-game').style.display = 'inline';
+    // grid.place(0, 20, [
+    //     [true, true],
+    //     [true, true]
+    // ]);
+    // grid.place(20, 10, [[true, true, true]]);
+    // grid.place(1, 1, [
+    //     [false, true, false],
+    //     [false, false, true],
+    //     [true, true, true]
+    // ]);
+    // grid.place(30, 30, [
+    //     [false, true, false],
+    //     [false, true, false],
+    //     [true, false, true],
+    //     [false, true, false],
+    //     [false, true, false],
+    //     [false, true, false],
+    //     [false, true, false],
+    //     [true, false, true],
+    //     [false, true, false],
+    //     [false, true, false]
+    // ]);
 };
 
 const toggleGame = () => {
@@ -137,7 +145,9 @@ const toggleGame = () => {
     }
 };
 const stopGame = () => grid.isOn && grid.stop();
-const startGame = () => !grid.isOn && grid.start();
+const startGame = () => {
+    !grid.isOn && grid.start();
+};
 const handleFrameRateChange = () => {
     const setFrameRateButton = document.getElementById('set-framerate-button');
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
@@ -150,3 +160,15 @@ const setFrameRate = () => {
     const setFrameRateButton = document.getElementById('set-framerate-button');
     setFrameRateButton.style.display = 'none';
 };
+
+const canvas = document.getElementById('game-canvas-1');
+canvas.addEventListener('click', e => {
+    if (grid.isOn) toggleGame();
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cellX = Number.parseInt(x / grid.cellSize);
+    const cellY = Number.parseInt(y / grid.cellSize);
+    grid.place(cellX, cellY, [[!grid.loc[cellY][cellX]]]);
+    grid.draw();
+});
