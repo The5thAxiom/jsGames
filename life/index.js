@@ -36,6 +36,15 @@ class Grid {
         }
         // if (startLater) this.start();
     }
+    set(x, y) {
+        this.loc[y][x] = true;
+    }
+    unset(x, y) {
+        this.loc[y][x] = false;
+    }
+    toggle(x, y) {
+        this.loc[y][x] = !this.loc[y][x];
+    }
     getLiveNeighbours(x, y) {
         let count = 0;
         for (let i of [y - 1, y, y + 1]) {
@@ -49,7 +58,13 @@ class Grid {
         return count;
     }
     clear() {
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.loc = [];
+        for (let i = 0; i < this.height; i++) {
+            let temp = [];
+            for (let j = 0; j < this.width; j++) temp.push(false);
+            this.loc.push(temp);
+        }
+        this.draw();
     }
     step() {
         let newLoc = [];
@@ -77,6 +92,13 @@ class Grid {
         for (let i = 0; i < this.height; i++) {
             for (let j = 0; j < this.width; j++) {
                 this.ctx.fillStyle = this.loc[i][j] ? 'white' : 'darkred';
+                this.ctx.strokeStyle = 'gray';
+                this.ctx.strokeRect(
+                    j * this.cellSize,
+                    i * this.cellSize,
+                    this.cellSize,
+                    this.cellSize
+                );
                 this.ctx.fillRect(
                     j * this.cellSize,
                     i * this.cellSize,
@@ -101,21 +123,12 @@ class Grid {
     }
 }
 
-let gameStarted = false;
-let grid;
-
-const newgame = () => {
-    if (gameStarted) grid.stop();
-    gameStarted = true;
-    const frameRate = document.getElementById('frame-rate').valueAsNumber;
-    grid = new Grid('game-canvas-1', 50, 50, 10, frameRate);
-    document.getElementById('play-pause-game').style.display = 'inline';
-};
+const frameRate = document.getElementById('frame-rate').valueAsNumber;
+const grid = new Grid('game-canvas-1', 30, 40, 20, frameRate);
 
 const toggleGame = () => {
     const toggleGameButton = document.getElementById('play-pause-game');
     const stepGameButton = document.getElementById('step-game');
-
     if (grid.isOn) {
         toggleGameButton.innerHTML = 'Play';
         grid.stop();
@@ -127,15 +140,17 @@ const toggleGame = () => {
     }
 };
 const stopGame = () => grid.isOn && grid.stop();
-const startGame = () => {
-    !grid.isOn && grid.start();
-};
-
+const startGame = () => !grid.isOn && grid.start();
 const stepGame = () => {
     if (!grid.isOn) {
         grid.step();
         grid.draw();
     }
+};
+const clearGame = () => {
+    if (grid.isOn) toggleGame();
+    grid.stop();
+    grid.clear();
 };
 
 const handleFrameRateChange = () => {
@@ -152,35 +167,53 @@ const setFrameRate = () => {
 };
 
 const canvas = document.getElementById('game-canvas-1');
-canvas.addEventListener('click', e => {
-    if (grid.isOn) toggleGame();
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cellX = Number.parseInt(x / grid.cellSize);
-    const cellY = Number.parseInt(y / grid.cellSize);
-    grid.place(cellX, cellY, [[!grid.loc[cellY][cellX]]]);
-    grid.draw();
-});
 
 let mouseIsOverCanvas = false;
-canvas.addEventListener('mouseenter', () => (mouseIsOverCanvas = true));
-canvas.addEventListener('mouseleave', () => (mouseIsOverCanvas = false));
+canvas.addEventListener('mouseenter', () => {
+    mouseIsOverCanvas = true;
+});
+canvas.addEventListener('mouseleave', () => {
+    mouseIsOverCanvas = false;
+});
 
-let prevLoc = { x: 0, y: 0 };
-canvas.addEventListener('mousemove', e => {
-    if (!gameStarted || !mouseIsOverCanvas) return;
+const getCurrentCell = e => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const cellX = Number.parseInt(x / grid.cellSize);
     const cellY = Number.parseInt(y / grid.cellSize);
-    if (prevLoc.x !== cellX || prevLoc.y != cellY)
-        if (e.buttons === 1) {
+    return { x: cellX, y: cellY };
+};
+
+let prevLoc = { x: 0, y: 0 };
+let beingClicked = false;
+
+canvas.addEventListener('mousemove', e => {
+    if (!mouseIsOverCanvas) return;
+    const currentLoc = getCurrentCell(e);
+    const isLeftClick = e.buttons === 1;
+    if (
+        prevLoc.x !== currentLoc.x ||
+        prevLoc.y !== currentLoc.y ||
+        !beingClicked
+    ) {
+        if (isLeftClick) {
             if (grid.isOn) toggleGame();
-            grid.place(cellX, cellY, [[true]]);
+            grid.set(currentLoc.x, currentLoc.y);
             grid.draw();
+            beingClicked = true;
+        } else {
+            beingClicked = false;
         }
-    prevLoc = { x: cellX, y: cellY };
+    }
+    prevLoc = currentLoc;
+});
+
+canvas.addEventListener('click', e => {
+    if (beingClicked) return;
+    if (grid.isOn) toggleGame();
+    const currentLoc = getCurrentCell(e);
+    grid.toggle(currentLoc.x, currentLoc.y);
+    grid.draw();
 });
 
