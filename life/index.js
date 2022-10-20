@@ -136,7 +136,6 @@ const canvas = document.getElementById('game-canvas-1');
 const toggleGameButton = document.getElementById('toggle-game');
 const stepGameButton = document.getElementById('step-game');
 const clearGameButton = document.getElementById('clear-game');
-const setFrameRateButton = document.getElementById('set-framerate-button');
 
 const hide = element => {
     element.style.display = 'none';
@@ -176,14 +175,10 @@ const clearGame = () => {
     hide(clearGameButton);
 };
 
-const handleFrameRateChange = () => {
-    const frameRate = document.getElementById('frame-rate').valueAsNumber;
-    if (frameRate !== grid.frameRate) show(setFrameRateButton);
-};
 const setFrameRate = () => {
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
     grid.frameRate = frameRate;
-    hide(setFrameRateButton);
+    document.getElementById('frame-rate-value').innerHTML = frameRate;
 };
 
 let mouseIsOverCanvas = false;

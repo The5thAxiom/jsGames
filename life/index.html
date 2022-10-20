@@ -12,18 +12,13 @@
         Framerate:
         <input
             id="frame-rate"
-            type="number"
+            type="range"
             step="1"
             value="250"
             min="0"
-            onchange="handleFrameRateChange()"
-        /><button
-            style="display: none"
-            onclick="setFrameRate()"
-            id="set-framerate-button"
-        >
-            Set Framerate
-        </button>
+            max="500"
+            onchange="setFrameRate()"
+        /><span id="frame-rate-value">250</span>
         <br />
         <input id="draw-mode" type="radio" name="click-mode" checked />
         <span> Draw Mode </span>
