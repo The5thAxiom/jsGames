@@ -132,20 +132,29 @@ class Grid {
 const frameRate = document.getElementById('frame-rate').valueAsNumber;
 const grid = new Grid('game-canvas-1', 30, 40, 20, frameRate);
 
+const canvas = document.getElementById('game-canvas-1');
+const toggleGameButton = document.getElementById('toggle-game');
+const stepGameButton = document.getElementById('step-game');
+const clearGameButton = document.getElementById('clear-game');
+const setFrameRateButton = document.getElementById('set-framerate-button');
+
+const hide = element => (element.style.display = 'none');
+const show = element => (element.style.display = 'initial');
+
 const toggleGame = () => {
-    const toggleGameButton = document.getElementById('play-pause-game');
-    const stepGameButton = document.getElementById('step-game');
     if (grid.isOn) {
         // stopping the game
         toggleGameButton.innerHTML = 'Play';
         grid.stop();
-        stepGameButton.style.display = 'inline';
+        show(stepGameButton);
+        if (!grid.isEmpty) show(clearGameButton);
     } else {
         // starting the game
         toggleGameButton.innerHTML = 'Pause';
         grid.start();
-        stepGameButton.style.display = 'none';
+        hide(stepGameButton);
         showClearButtonIfNeeded();
+        if (!grid.isEmpty) show(clearGameButton);
     }
 };
 
@@ -160,22 +169,18 @@ const clearGame = () => {
     if (grid.isOn) toggleGame();
     grid.stop();
     grid.clear();
+    hide(clearGameButton);
 };
 
 const handleFrameRateChange = () => {
-    const setFrameRateButton = document.getElementById('set-framerate-button');
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
-    if (frameRate !== grid.frameRate)
-        setFrameRateButton.style.display = 'inline';
+    if (frameRate !== grid.frameRate) show(setFrameRateButton);
 };
 const setFrameRate = () => {
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
     grid.frameRate = frameRate;
-    const setFrameRateButton = document.getElementById('set-framerate-button');
-    setFrameRateButton.style.display = 'none';
+    hide(setFrameRateButton);
 };
-
-const canvas = document.getElementById('game-canvas-1');
 
 let mouseIsOverCanvas = false;
 canvas.addEventListener('mouseenter', () => {
@@ -187,11 +192,9 @@ canvas.addEventListener('mouseleave', () => {
 
 const getCurrentCell = e => {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cellX = Number.parseInt(x / grid.cellSize);
-    const cellY = Number.parseInt(y / grid.cellSize);
-    return { x: cellX, y: cellY };
+    const x = Number.parseInt((e.clientX - rect.left) / grid.cellSize);
+    const y = Number.parseInt((e.clientY - rect.top) / grid.cellSize);
+    return { x, y };
 };
 
 let prevLoc = { x: 0, y: 0 };
@@ -210,6 +213,7 @@ canvas.addEventListener('mousemove', e => {
             if (grid.isOn) toggleGame();
             grid.set(currentLoc.x, currentLoc.y);
             grid.draw();
+            isEmptyWatcher();
             beingClicked = true;
         } else {
             beingClicked = false;
@@ -224,16 +228,22 @@ canvas.addEventListener('click', e => {
     const currentLoc = getCurrentCell(e);
     grid.toggle(currentLoc.x, currentLoc.y);
     grid.draw();
+    isEmptyWatcher();
 });
 
 const isEmptyWatcher = () => {
-    const clearGameButton = document.getElementById('clear-game');
     if (grid.isEmpty) {
-        clearGameButton.style.display = 'none';
+        hide(clearGameButton);
         if (grid.isOn) toggleGame();
+        else {
+            hide(toggleGameButton);
+            hide(stepGameButton);
+        }
     } else {
-        clearGameButton.style.display = 'inline';
-        setTimeout(showClearButtonIfNeeded, 0);
+        show(clearGameButton);
+        show(toggleGameButton);
+        if (!grid.isOn) show(stepGameButton);
+        setTimeout(isEmptyWatcher, 0);
     }
 };
 
