@@ -138,8 +138,12 @@ const stepGameButton = document.getElementById('step-game');
 const clearGameButton = document.getElementById('clear-game');
 const setFrameRateButton = document.getElementById('set-framerate-button');
 
-const hide = element => (element.style.display = 'none');
-const show = element => (element.style.display = 'initial');
+const hide = element => {
+    element.style.display = 'none';
+};
+const show = element => {
+    element.style.display = 'initial';
+};
 
 const toggleGame = () => {
     if (grid.isOn) {
@@ -153,7 +157,7 @@ const toggleGame = () => {
         toggleGameButton.innerHTML = 'Pause';
         grid.start();
         hide(stepGameButton);
-        showClearButtonIfNeeded();
+        isEmptyWatcher();
         if (!grid.isEmpty) show(clearGameButton);
     }
 };
@@ -204,6 +208,7 @@ canvas.addEventListener('mousemove', e => {
     if (!mouseIsOverCanvas) return;
     const currentLoc = getCurrentCell(e);
     const isLeftClick = e.buttons === 1;
+    const drawMode = document.getElementById('draw-mode').checked;
     if (
         prevLoc.x !== currentLoc.x ||
         prevLoc.y !== currentLoc.y ||
@@ -211,7 +216,8 @@ canvas.addEventListener('mousemove', e => {
     ) {
         if (isLeftClick) {
             if (grid.isOn) toggleGame();
-            grid.set(currentLoc.x, currentLoc.y);
+            if (drawMode) grid.set(currentLoc.x, currentLoc.y);
+            else grid.unset(currentLoc.x, currentLoc.y);
             grid.draw();
             isEmptyWatcher();
             beingClicked = true;

@@ -9,7 +9,6 @@
     </head>
     <body>
         <h1>Conway's Game of Life</h1>
-        <canvas id="game-canvas-1"></canvas><br />
         Framerate:
         <input
             id="frame-rate"
@@ -26,6 +25,12 @@
             Set Framerate
         </button>
         <br />
+        <input id="draw-mode" type="radio" name="click-mode" checked />
+        <span> Draw Mode </span>
+        <input type="radio" name="click-mode" />
+        <span> Erase Mode </span>
+        <br />
+        <canvas id="game-canvas-1"></canvas><br />
         <button id="toggle-game" style="display: none" onclick="toggleGame()">
             Play
         </button>
