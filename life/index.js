@@ -6,6 +6,7 @@ class Grid {
         this.width = width;
         this.cellSize = cellSize;
         this.frameRate = frameRate;
+        this.isEmpty = true;
 
         this.loc = [];
         for (let i = 0; i < height; i++) {
@@ -23,27 +24,30 @@ class Grid {
         this.clear();
         this.draw();
     }
+    checkIsEmpty() {
+        this.isEmpty = !this.loc.some(y => y.some(x => x));
+    }
     place(x, y, item) {
-        // let startLater = false;
-        // if (this.isOn) {
-        //     this.stop();
-        //     startLater = true;
-        // }
         for (let i = 0; i < item.length; i++) {
             for (let j = 0; j < item[i].length; j++) {
                 this.loc[i + y][j + x] = item[i][j];
+                if (this.isEmpty && item[i][j]) this.isEmpty = false;
             }
         }
-        // if (startLater) this.start();
     }
     set(x, y) {
         this.loc[y][x] = true;
+        if (this.isEmpty) this.isEmpty = false;
     }
     unset(x, y) {
         this.loc[y][x] = false;
+        this.checkIsEmpty();
     }
     toggle(x, y) {
         this.loc[y][x] = !this.loc[y][x];
+        if (this.isEmpty) {
+            if (this.loc[y][x]) this.isEmpty = false;
+        } else this.checkIsEmpty();
     }
     getLiveNeighbours(x, y) {
         let count = 0;
@@ -65,6 +69,7 @@ class Grid {
             this.loc.push(temp);
         }
         this.draw();
+        this.isEmpty = true;
     }
     step() {
         let newLoc = [];
@@ -87,6 +92,7 @@ class Grid {
             }
         }
         this.loc = newLoc;
+        this.checkIsEmpty();
     }
     draw() {
         for (let i = 0; i < this.height; i++) {
@@ -139,6 +145,7 @@ const toggleGame = () => {
         toggleGameButton.innerHTML = 'Pause';
         grid.start();
         stepGameButton.style.display = 'none';
+        showClearButtonIfNeeded();
     }
 };
 
@@ -218,4 +225,17 @@ canvas.addEventListener('click', e => {
     grid.toggle(currentLoc.x, currentLoc.y);
     grid.draw();
 });
+
+const isEmptyWatcher = () => {
+    const clearGameButton = document.getElementById('clear-game');
+    if (grid.isEmpty) {
+        clearGameButton.style.display = 'none';
+        if (grid.isOn) toggleGame();
+    } else {
+        clearGameButton.style.display = 'inline';
+        setTimeout(showClearButtonIfNeeded, 0);
+    }
+};
+
+isEmptyWatcher();
 
