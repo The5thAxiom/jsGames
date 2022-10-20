@@ -110,28 +110,6 @@ const newgame = () => {
     const frameRate = document.getElementById('frame-rate').valueAsNumber;
     grid = new Grid('game-canvas-1', 50, 50, 10, frameRate);
     document.getElementById('play-pause-game').style.display = 'inline';
-    // grid.place(0, 20, [
-    //     [true, true],
-    //     [true, true]
-    // ]);
-    // grid.place(20, 10, [[true, true, true]]);
-    // grid.place(1, 1, [
-    //     [false, true, false],
-    //     [false, false, true],
-    //     [true, true, true]
-    // ]);
-    // grid.place(30, 30, [
-    //     [false, true, false],
-    //     [false, true, false],
-    //     [true, false, true],
-    //     [false, true, false],
-    //     [false, true, false],
-    //     [false, true, false],
-    //     [false, true, false],
-    //     [true, false, true],
-    //     [false, true, false],
-    //     [false, true, false]
-    // ]);
 };
 
 const toggleGame = () => {
@@ -191,8 +169,7 @@ canvas.addEventListener('mouseleave', () => (mouseIsOverCanvas = false));
 
 let prevLoc = { x: 0, y: 0 };
 canvas.addEventListener('mousemove', e => {
-    if (!gameStarted) return;
-    if (!mouseIsOverCanvas) return;
+    if (!gameStarted || !mouseIsOverCanvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -200,6 +177,7 @@ canvas.addEventListener('mousemove', e => {
     const cellY = Number.parseInt(y / grid.cellSize);
     if (prevLoc.x !== cellX || prevLoc.y != cellY)
         if (e.buttons === 1) {
+            if (grid.isOn) toggleGame();
             grid.place(cellX, cellY, [[true]]);
             grid.draw();
         }
