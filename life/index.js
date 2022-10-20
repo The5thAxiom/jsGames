@@ -130,23 +130,25 @@ const toggleGame = () => {
     const toggleGameButton = document.getElementById('play-pause-game');
     const stepGameButton = document.getElementById('step-game');
     if (grid.isOn) {
+        // stopping the game
         toggleGameButton.innerHTML = 'Play';
         grid.stop();
         stepGameButton.style.display = 'inline';
     } else {
+        // starting the game
         toggleGameButton.innerHTML = 'Pause';
         grid.start();
         stepGameButton.style.display = 'none';
     }
 };
-const stopGame = () => grid.isOn && grid.stop();
-const startGame = () => !grid.isOn && grid.start();
+
 const stepGame = () => {
     if (!grid.isOn) {
         grid.step();
         grid.draw();
     }
 };
+
 const clearGame = () => {
     if (grid.isOn) toggleGame();
     grid.stop();
