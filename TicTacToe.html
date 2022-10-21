@@ -1,136 +1,144 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>TicTacToe</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <style>
+        #game-box {
+            display: none;
+            grid-template-columns: 100px 100px 100px;
+            grid-template-rows: 100px 100px 100px;
+            grid-gap: 10px;
+        }
 
-<head>
-    <title>jsGames &gt; TicTacToe</title>
-</head>
-<style>
-    #game-box {
-        display: none;
-        grid-template-columns: 100px 100px 100px;
-        grid-template-rows: 100px 100px 100px;
-        grid-gap: 10px;
-    }
-    
-    .square {
-        background-color: blue;
-        color: white;
-        font-size: xx-large;
-        text-align: center;
-    }
-</style>
+        .square {
+            background-color: blue;
+            color: white;
+            font-size: xx-large;
+            text-align: center;
+        }
+    </style>
 
-<body>
-    <h1> Tic Tac Toe </h1>
-    <button id="new-game">New Game</button>
-    <div id="game-box">
-        <div id="top-left" class="square"></div>
-        <div id="top-centre" class="square"></div>
-        <div id="top-right" class="square"></div>
-        <div id="mid-left" class="square"></div>
-        <div id="mid-centre" class="square"></div>
-        <div id="mid-right" class="square"></div>
-        <div id="bottom-left" class="square"></div>
-        <div id="bottom-centre" class="square"></div>
-        <div id="bottom-right" class="square"></div>
-    </div>
-</body>
+    <body>
+        <a href="index.html">back</a>
+        <h1>Tic Tac Toe</h1>
+        <button id="new-game">New Game</button>
+        <div id="game-box">
+            <div id="top-left" class="square"></div>
+            <div id="top-centre" class="square"></div>
+            <div id="top-right" class="square"></div>
+            <div id="mid-left" class="square"></div>
+            <div id="mid-centre" class="square"></div>
+            <div id="mid-right" class="square"></div>
+            <div id="bottom-left" class="square"></div>
+            <div id="bottom-centre" class="square"></div>
+            <div id="bottom-right" class="square"></div>
+        </div>
+    </body>
 
-<script>
-    // global variables
+    <script>
+        // global variables
 
-    // the counter keeps track of the number of squares clicked
-    let COUNTER = 0;
+        // the counter keeps track of the number of squares clicked
+        let COUNTER = 0;
 
-    // squares
-    const topLeft = document.getElementById("top-left");
-    const topCentre = document.getElementById("top-centre");
-    const topRight = document.getElementById("top-right");
+        // squares
+        const topLeft = document.getElementById('top-left');
+        const topCentre = document.getElementById('top-centre');
+        const topRight = document.getElementById('top-right');
 
-    const midLeft = document.getElementById("mid-left");
-    const midCentre = document.getElementById("mid-centre");
-    const midRight = document.getElementById("mid-right");
+        const midLeft = document.getElementById('mid-left');
+        const midCentre = document.getElementById('mid-centre');
+        const midRight = document.getElementById('mid-right');
 
-    const bottomLeft = document.getElementById("bottom-left");
-    const bottomCentre = document.getElementById("bottom-centre");
-    const bottomRight = document.getElementById("bottom-right");
+        const bottomLeft = document.getElementById('bottom-left');
+        const bottomCentre = document.getElementById('bottom-centre');
+        const bottomRight = document.getElementById('bottom-right');
 
-    //----------------------------------------------------------------
-    // functions
+        //----------------------------------------------------------------
+        // functions
 
-    gameOver = function() {
-        if (
-            (topLeft.innerHTML != "") &&
-            (topLeft.innerHTML == topCentre.innerHTML) &&
-            (topCentre.innerHTML == topRight.innerHTML)
-        ) return true;
-        else if (
-            (midLeft.innerHTML != "") &&
-            (midLeft.innerHTML == midCentre.innerHTML) &&
-            (midCentre.innerHTML == midRight.innerHTML)
-        ) return true;
-        else if (
-            (bottomLeft.innerHTML != "") &&
-            (bottomLeft.innerHTML == bottomCentre.innerHTML) &&
-            (bottomCentre.innerHTML == bottomRight.innerHTML)
-        ) return true;
-        else if (
-            (topLeft.innerHTML != "") &&
-            (topLeft.innerHTML == midLeft.innerHTML) &&
-            (midLeft.innerHTML == bottomLeft.innerHTML)
-        ) return true;
-        else if (
-            (topCentre.innerHTML != "") &&
-            (topCentre.innerHTML == midCentre.innerHTML) &&
-            (midCentre.innerHTML == bottomCentre.innerHTML)
-        ) return true;
-        else if (
-            (topRight.innerHTML != "") &&
-            (topRight.innerHTML == midRight.innerHTML) &&
-            (midRight.innerHTML == bottomRight.innerHTML)
-        ) return true;
-        else if (
-            (topLeft.innerHTML != "") &&
-            (topLeft.innerHTML == midCentre.innerHTML) &&
-            (midCentre.innerHTML == bottomRight.innerHTML)
-        ) return true;
-        else if (
-            (topRight.innerHTML != "") &&
-            (topRight.innerHTML == midCentre.innerHTML) &&
-            (midCentre.innerHTML == bottomLeft.innerHTML)
-        ) return true;
-        else return false;
-    }
+        gameOver = function () {
+            if (
+                topLeft.innerHTML != '' &&
+                topLeft.innerHTML == topCentre.innerHTML &&
+                topCentre.innerHTML == topRight.innerHTML
+            )
+                return true;
+            else if (
+                midLeft.innerHTML != '' &&
+                midLeft.innerHTML == midCentre.innerHTML &&
+                midCentre.innerHTML == midRight.innerHTML
+            )
+                return true;
+            else if (
+                bottomLeft.innerHTML != '' &&
+                bottomLeft.innerHTML == bottomCentre.innerHTML &&
+                bottomCentre.innerHTML == bottomRight.innerHTML
+            )
+                return true;
+            else if (
+                topLeft.innerHTML != '' &&
+                topLeft.innerHTML == midLeft.innerHTML &&
+                midLeft.innerHTML == bottomLeft.innerHTML
+            )
+                return true;
+            else if (
+                topCentre.innerHTML != '' &&
+                topCentre.innerHTML == midCentre.innerHTML &&
+                midCentre.innerHTML == bottomCentre.innerHTML
+            )
+                return true;
+            else if (
+                topRight.innerHTML != '' &&
+                topRight.innerHTML == midRight.innerHTML &&
+                midRight.innerHTML == bottomRight.innerHTML
+            )
+                return true;
+            else if (
+                topLeft.innerHTML != '' &&
+                topLeft.innerHTML == midCentre.innerHTML &&
+                midCentre.innerHTML == bottomRight.innerHTML
+            )
+                return true;
+            else if (
+                topRight.innerHTML != '' &&
+                topRight.innerHTML == midCentre.innerHTML &&
+                midCentre.innerHTML == bottomLeft.innerHTML
+            )
+                return true;
+            else return false;
+        };
 
-    newGame = function() {
-        document.getElementById("game-box").style = "display: grid;";
-        console.log("new game")
-        COUNTER = 0;
-        for (let square of document.getElementsByClassName("square"))
-            square.innerHTML = "";
-    }
+        newGame = function () {
+            document.getElementById('game-box').style = 'display: grid;';
+            console.log('new game');
+            COUNTER = 0;
+            for (let square of document.getElementsByClassName('square'))
+                square.innerHTML = '';
+        };
 
-    //----------------------------------------------------------------
-    // Event Listeners
+        //----------------------------------------------------------------
+        // Event Listeners
 
-    // when a square is clicked
-    for (let square of document.getElementsByClassName("square"))
-        square.addEventListener('click', function() {
-            // if the square has not been clicked
-            if (this.innerHTML == "") {
-                console.log(this.id)
-                this.innerHTML = COUNTER % 2 == 0 ? "X" : "O";
-                COUNTER++;
-                if (gameOver() == true) {
-                    console.log("game over!")
-                    window.alert(this.innerHTML + " wins!!!");
-                    newGame();
+        // when a square is clicked
+        for (let square of document.getElementsByClassName('square'))
+            square.addEventListener('click', function () {
+                // if the square has not been clicked
+                if (this.innerHTML == '') {
+                    console.log(this.id);
+                    this.innerHTML = COUNTER % 2 == 0 ? 'X' : 'O';
+                    COUNTER++;
+                    if (gameOver() == true) {
+                        console.log('game over!');
+                        window.alert(this.innerHTML + ' wins!!!');
+                        newGame();
+                    }
                 }
-            }
-        })
+            });
 
-    // when the new game button is clicked
-    document.getElementById("new-game").addEventListener("click", newGame);
-</script>
-
+        // when the new game button is clicked
+        document.getElementById('new-game').addEventListener('click', newGame);
+    </script>
 </html>
