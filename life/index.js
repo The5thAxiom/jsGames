@@ -256,6 +256,8 @@ const isEmptyWatcher = () => {
             hide(stepGameButton);
             hide(eraseModeRadio);
             hide(eraseModeText);
+            if (!drawModeRadio.checked && !setDrawModeOnMouseUp)
+                drawModeRadio.checked = true;
         }
     } else {
         show(clearGameButton);
