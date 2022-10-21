@@ -136,6 +136,10 @@ const canvas = document.getElementById('game-canvas-1');
 const toggleGameButton = document.getElementById('toggle-game');
 const stepGameButton = document.getElementById('step-game');
 const clearGameButton = document.getElementById('clear-game');
+const drawModeRadio = document.getElementById('draw-mode-radio');
+const drawModeText = document.getElementById('draw-mode-text');
+const eraseModeRadio = document.getElementById('erase-mode-radio');
+const eraseModeText = document.getElementById('erase-mode-text');
 
 const hide = element => {
     element.style.display = 'none';
@@ -203,7 +207,7 @@ canvas.addEventListener('mousemove', e => {
     if (!mouseIsOverCanvas) return;
     const currentLoc = getCurrentCell(e);
     const isLeftClick = e.buttons === 1;
-    const drawMode = document.getElementById('draw-mode').checked;
+    const drawMode = drawModeRadio.checked;
     if (
         prevLoc.x !== currentLoc.x ||
         prevLoc.y !== currentLoc.y ||
@@ -232,6 +236,13 @@ canvas.addEventListener('click', e => {
     isEmptyWatcher();
 });
 
+let setDrawModeOnMouseUp = false;
+window.addEventListener('mouseup', () => {
+    if (setDrawModeOnMouseUp) {
+        drawModeRadio.checked = true;
+    }
+});
+
 const isEmptyWatcher = () => {
     if (grid.isEmpty) {
         hide(clearGameButton);
@@ -239,10 +250,15 @@ const isEmptyWatcher = () => {
         else {
             hide(toggleGameButton);
             hide(stepGameButton);
+            hide(eraseModeRadio);
+            hide(eraseModeText);
+            setDrawModeOnMouseUp = true;
         }
     } else {
         show(clearGameButton);
         show(toggleGameButton);
+        show(eraseModeRadio);
+        show(eraseModeText);
         if (!grid.isOn) show(stepGameButton);
         setTimeout(isEmptyWatcher, 0);
     }

@@ -9,32 +9,73 @@
     </head>
     <body>
         <h1>Conway's Game of Life</h1>
-        Framerate:
-        <input
-            id="frame-rate"
-            type="range"
-            step="1"
-            value="250"
-            min="0"
-            max="500"
-            onchange="setFrameRate()"
-        /><span id="frame-rate-value">250</span>
-        <br />
-        <input id="draw-mode" type="radio" name="click-mode" checked />
-        <span> Draw Mode </span>
-        <input type="radio" name="click-mode" />
-        <span> Erase Mode </span>
-        <br />
-        <canvas id="game-canvas-1"></canvas><br />
-        <button id="toggle-game" style="display: none" onclick="toggleGame()">
-            Play
-        </button>
-        <button id="clear-game" style="display: none" onclick="clearGame()">
-            Clear
-        </button>
-        <button id="step-game" style="display: none" onClick="stepGame()">
-            Step
-        </button>
+        <div style="display: flex">
+            <div>
+                <h3>Framerate</h3>
+                <input
+                    id="frame-rate"
+                    type="range"
+                    step="1"
+                    value="250"
+                    min="0"
+                    max="500"
+                    onchange="setFrameRate()"
+                /><span id="frame-rate-value">250</span>
+                <br />
+                <div style="display: flex; column-gap: 1rem">
+                    <div>
+                        <h3>Click</h3>
+                        <input type="radio" checked />Toggle cell
+                    </div>
+                    <div>
+                        <h3>Click, Hold and Drag</h3>
+                        <input
+                            id="draw-mode-radio"
+                            type="radio"
+                            name="click-mode"
+                            checked
+                        /><span id="draw-mode-text"> Draw </span>
+                        <input
+                            id="erase-mode-radio"
+                            type="radio"
+                            name="click-mode"
+                        />
+                        <span id="erase-mode-text"> Erase </span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button
+                    id="toggle-game"
+                    style="display: none"
+                    onclick="toggleGame()"
+                >
+                    Play
+                </button>
+                <button
+                    id="clear-game"
+                    style="display: none"
+                    onclick="clearGame()"
+                >
+                    Clear
+                </button>
+                <button
+                    id="step-game"
+                    style="display: none"
+                    onClick="stepGame()"
+                >
+                    Step
+                </button>
+            </div>
+        </div>
+        <canvas
+            style="
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            "
+            id="game-canvas-1"
+        ></canvas>
     </body>
 </html>
 
