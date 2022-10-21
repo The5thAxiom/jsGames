@@ -202,6 +202,7 @@ const getCurrentCell = e => {
 
 let prevLoc = { x: 0, y: 0 };
 let beingClicked = false;
+let setDrawModeOnMouseUp = false;
 
 canvas.addEventListener('mousemove', e => {
     if (!mouseIsOverCanvas) return;
@@ -218,6 +219,8 @@ canvas.addEventListener('mousemove', e => {
             if (drawMode) grid.set(currentLoc.x, currentLoc.y);
             else grid.unset(currentLoc.x, currentLoc.y);
             grid.draw();
+            if (grid.isEmpty) setDrawModeOnMouseUp = true;
+
             isEmptyWatcher();
             beingClicked = true;
         } else {
@@ -227,20 +230,21 @@ canvas.addEventListener('mousemove', e => {
     prevLoc = currentLoc;
 });
 
+window.addEventListener('mouseup', () => {
+    if (setDrawModeOnMouseUp) {
+        drawModeRadio.checked = true;
+        setDrawModeOnMouseUp = false;
+    }
+});
+
 canvas.addEventListener('click', e => {
     if (beingClicked) return;
     if (grid.isOn) toggleGame();
     const currentLoc = getCurrentCell(e);
     grid.toggle(currentLoc.x, currentLoc.y);
     grid.draw();
+    if (grid.isEmpty) drawModeRadio.checked = true;
     isEmptyWatcher();
-});
-
-let setDrawModeOnMouseUp = false;
-window.addEventListener('mouseup', () => {
-    if (setDrawModeOnMouseUp) {
-        drawModeRadio.checked = true;
-    }
 });
 
 const isEmptyWatcher = () => {
@@ -252,7 +256,6 @@ const isEmptyWatcher = () => {
             hide(stepGameButton);
             hide(eraseModeRadio);
             hide(eraseModeText);
-            setDrawModeOnMouseUp = true;
         }
     } else {
         show(clearGameButton);
