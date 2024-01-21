@@ -3,3 +3,13 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+#highlighted-object {
+    position: fixed;
+    right: 5em;
+    top: 5em;
+    background-color: lightblue;
+    padding-inline: 2em;
+    padding-bottom: 2em;
+    border-radius: 1em;
+}
