@@ -1,6 +1,6 @@
 import Character from "../character.js";
 import GridObject from "../gridObject.js";
-import Level from "../level.js"
+import Level from "../level.js";
 
 function getLevel1(container, statsDiv) {
     const level = new Level('Level 1', container, {
@@ -8,33 +8,10 @@ function getLevel1(container, statsDiv) {
         statsDiv: statsDiv,
         height: 14,
         width: 18,
-        cellSize: 40
-    })
+        cellSize: 100
+    });
 
-    new GridObject('tree', level, {
-        size: 'large',
-        imageUrl: 'https://www.freeiconspng.com/uploads/palm-tree-9.png',
-        defaultLocation: {x: 8, y: 5}
-    })
-
-    new Character('thing2', level, {
-        imageUrl: 'https://yasashiikyojinstudio.com/cdn/shop/files/Marut_01_Token_Round_A.png?v=1683157583',
-        speed: 2,
-        size: 'small',
-        maxHP: 15,
-        currentHP: 10,
-        defaultLocation: {x: 6, y: 10}
-    })
-
-    new Character('thing3', level, {
-        imageUrl: 'https://yasashiikyojinstudio.com/cdn/shop/files/Marut_01_Token_Round_A.png?v=1683157583',
-        size: 'large',
-        speed: 4,
-        maxHP: 30,
-        currentHP: 17,
-        defaultLocation: {x: 3, y: 5}
-    })
-
+    // setting up the environment
     new GridObject('pillar 1', level, {
         height: 1,
         width: 1,
@@ -57,6 +34,80 @@ function getLevel1(container, statsDiv) {
         height: 1,
         width: 1,
         defaultLocation: { x: 5, y: 8 }
+    });
+
+    // setting up the NPCs
+    new Character('Bug A', level, {
+        imageUrl: "./assets/bug.png",
+        speed: 2,
+        size: 'small',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 10, y: 3 }
+    });
+
+    new Character('Bug B', level, {
+        imageUrl: "./assets/bug.png",
+        speed: 2,
+        size: 'small',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 7, y: 3 }
+    });
+
+    new Character('Bug C', level, {
+        imageUrl: "./assets/bug.png",
+        speed: 2,
+        size: 'small',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 8, y: 4 }
+    });
+
+    new Character('Bug D', level, {
+        imageUrl: "./assets/bug.png",
+        speed: 2,
+        size: 'small',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 9, y: 4 }
+    });
+
+    new Character('Bug D', level, {
+        imageUrl: "./assets/armour-devourer.png",
+        speed: 2,
+        size: 'small',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 8, y: 2 }
+    });
+
+    // setting up the PCs
+    new Character('Knight', level, {
+        imageUrl: "./assets/knight.png",
+        speed: 2,
+        size: 'medium',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 8, y: 7 }
+    });
+
+    new Character('Mage', level, {
+        imageUrl: "./assets/mage.png",
+        speed: 2,
+        size: 'medium',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 9, y: 9 }
+    });
+
+    new Character('Cleric', level, {
+        imageUrl: "./assets/cleric.png",
+        speed: 2,
+        size: 'medium',
+        maxHP: 15,
+        currentHP: 15,
+        defaultLocation: { x: 8, y: 9 }
     });
 
     return level
