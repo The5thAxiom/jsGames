@@ -3,8 +3,6 @@ class Grid {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
 
-        this.onItemSelect = 
-
         this.height = height;
         this.width = width;
         this.cellSize = cellSize;
@@ -166,14 +164,16 @@ class Grid {
                     this.cellSize
                 );
                 if (this.mapUrl) this.ctx.globalAlpha = 0.2;
-
-                this.ctx.fillStyle = this.cellColors[yi][xi];
-                this.ctx.fillRect(
-                    xi * this.cellSize,
-                    yi * this.cellSize,
-                    this.cellSize,
-                    this.cellSize
-                );
+                
+                if (this.cellColors[yi][xi]) {
+                    this.ctx.fillStyle = this.cellColors[yi][xi];
+                    this.ctx.fillRect(
+                        xi * this.cellSize,
+                        yi * this.cellSize,
+                        this.cellSize,
+                        this.cellSize
+                    );
+                }
                 this.ctx.restore();
             }
         }

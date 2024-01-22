@@ -1,16 +1,28 @@
-class GridObject {
-    constructor(name, grid, statsDiv, options) {
-        this.name = name;
-        this.grid = grid;
-        this.statsDiv = statsDiv;
+import {sizeToBlocks } from "./utils.js";
 
-        this.height = options.height;
-        this.width = options.width;
+class GridObject {
+    constructor(name, level, options) {
+        this.name = name;
+        this.level = level;
+        this.grid = level.grid;
+        this.statsDiv = level.statsDiv;
+
+        if (options.size) {
+            this.height = sizeToBlocks[options.size];
+            this.width = sizeToBlocks[options.size];
+        } else {
+            this.height = options.height;
+            this.width = options.width;
+        }
         this.imageUrl = options.imageUrl;
         this.image = new Image();
         if (this.imageUrl) this.image.src = this.imageUrl;
         this.selected = false;
         this.highlighted = false;
+
+        if (options.defaultLocation) {
+            this.grid.place(this, options.defaultLocation.x, options.defaultLocation.y)
+        }
     }
 
     setPosition(x, y) {

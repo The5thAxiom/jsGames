@@ -2,10 +2,8 @@ import GridObject from "./gridObject.js";
 import {id, gridDistance, sizeToBlocks } from "./utils.js";
 
 class Character extends GridObject{
-    constructor(name, grid, statsDiv, options) {
-        super(name, grid, statsDiv, options)
-        this.height = sizeToBlocks[options.size];
-        this.width = sizeToBlocks[options.size];
+    constructor(name, level, options) {
+        super(name, level, options);
         this.speed = options.speed;
         this.remainingMovement = options.speed;
         this.maxHP = options.maxHP;
@@ -108,7 +106,7 @@ class Character extends GridObject{
                         // && this.grid.canPlace(this, xi, yi)
                     ) {
                         // the condition to be used above needs to be more complex (add it later)
-                        this.grid.setCellFillColor(xi, yi, 'lightgreen');
+                        this.grid.setCellFillColor(xi, yi, 'green');
                     }
                 }
             }

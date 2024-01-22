@@ -1,4 +1,4 @@
-#game-canvas {
+canvas {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -12,4 +12,5 @@
     padding-inline: 2em;
     padding-bottom: 2em;
     border-radius: 1em;
+    max-width: 15em;
 }
