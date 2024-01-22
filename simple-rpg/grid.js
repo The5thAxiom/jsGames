@@ -69,15 +69,19 @@ class Grid {
 
     startPanning(e) {
         // console.log('start dragging');
-        this.mouseFunction = 'panning';
-        this.dragStart.x = e.clientX / this.cameraZoom - this.cameraOffset.x;
-        this.dragStart.y = e.clientY / this.cameraZoom - this.cameraOffset.y;
+        if (this.mouseFunction == 'free') {
+            this.mouseFunction = 'panning';
+            this.dragStart.x = e.clientX / this.cameraZoom - this.cameraOffset.x;
+            this.dragStart.y = e.clientY / this.cameraZoom - this.cameraOffset.y;
+        }
     }
 
     endPanning(e) {
         // console.log('end dragging');
-        this.mouseFunction = 'free';
-        this.lastZoom = this.cameraZoom;
+        if (this.mouseFunction == 'panning') {
+            this.mouseFunction = 'free';
+            this.lastZoom = this.cameraZoom;
+        }
     }
 
     setMap(mapUrl) {
@@ -88,15 +92,32 @@ class Grid {
 
     onGridClick(e) {
         // console.log('clicked')
-        if (this.mouseFunction !== 'free') return;
-        for (let placedItem of this.items) {
-            placedItem.unSelect();
-        }
-        const { x, y, outOfBounds } = this.getCellUnderMouse(e);
-        if (outOfBounds) return;
-        const clickedItem = this.occupiedBy[y][x];
-        if (clickedItem !== null) {
-            clickedItem.select()
+        if (this.mouseFunction === 'free') {
+            for (let placedItem of this.items) {
+                placedItem.unSelect();
+            }
+            const { x, y, outOfBounds } = this.getCellUnderMouse(e);
+            if (outOfBounds) return;
+            const clickedItem = this.occupiedBy[y][x];
+            if (clickedItem !== null) {
+                clickedItem.select()
+            }
+        } else if (this.mouseFunction == 'select') {
+            this.mouseFunction = 'free';
+            const tempSelectBoxIsValid = !!this.tempSelectBox && this.selectBoxValidate(
+                this.tempSelectBox.x,
+                this.tempSelectBox.y,
+                this.tempSelectBox.w,
+                this.tempSelectBox.h,
+            );
+            // console.log('a', tempSelectBoxIsValid)
+            if (tempSelectBoxIsValid) {
+                this.selectBox = this.tempSelectBox;
+            } else {
+                for (let placedItem of this.items) {
+                    placedItem.unSelect();
+                }
+            }
         }
     }
 
@@ -119,6 +140,13 @@ class Grid {
             this.cameraOffset.y = e.clientY / this.cameraZoom - this.dragStart.y;
             // console.log({xo: this.cameraOffset.x, yo: this.cameraOffset.y})
         } else if (this.mouseFunction === 'select') {
+            const { x, y, w, h, outOfBounds } = this.getBoxUnderMouse(e, this.selectBoxDims.w, this.selectBoxDims.h);
+            // console.log({ x, y, w, h, v: this.selectBoxValidate(x, y, w, h) });
+            if (!outOfBounds && this.selectBoxValidate(x, y, w, h)) {
+                this.tempSelectBox = { x, y, w, h };
+            } else {
+                this.tempSelectBox = null;
+            }
         }
     }
 
@@ -155,6 +183,51 @@ class Grid {
         //     xo: this.cameraOffset.x, yo: this.cameraOffset.y, cz: this.cameraZoom
         // });
         return { x, y, outOfBounds};
+    }
+
+    getBoxUnderMouse(e, boxW, boxH) {
+        const { x, y, outOfBounds } = this.getCellUnderMouse(e);
+        if (outOfBounds) return { x: - 1, y: -1, outOfBounds };
+        
+        const leftCells = boxW % 2 === 0 ? boxW / 2 - 1: (boxW - 1) / 2;
+        const rightCells = boxW % 2 === 0 ? boxW / 2: (boxW - 1) / 2;
+        const topCells = boxH % 2 === 0 ? boxH / 2 - 1: (boxH - 1) / 2;
+        const bottomCells = boxH % 2 === 0 ? boxH / 2 : (boxH - 1) / 2;
+        // console.log({leftCells, rightCells, bottomCells, topCells})
+        
+        let answer = { x: x - leftCells, y: y - topCells, w: boxW, h: boxH, outOfBounds: false };
+        // if the box touches any border
+        if (x - leftCells < 0) answer.x = 0;
+        if (x + rightCells >= this.width) answer.x = this.width - boxW;
+        if (y - topCells < 0) answer.y = 0;
+        if (y + bottomCells >= this.height) answer.y = this.height - boxH;
+        return answer;
+    }
+
+    getBox(w, h, validate) {
+        return new Promise((resolve, reject) => {
+            this.mouseFunction = 'select';
+            this.selectBoxDims = { w, h };
+            this.selectBoxValidate = validate;
+            // console.log(validate)
+            this.selectBox = null;
+            const keepChecking = setInterval(() => {
+                // console.log(`checking: ${this.selectBox}`);
+                if (this.mouseFunction === 'free') {
+                    // console.log('end')
+                    if (this.selectBox) {
+                        this.selectBox.canceled = false;
+                        resolve(this.selectBox)
+                    } else {
+                        resolve({x: -1, y: -1, h: -1, w: -1, canceled: true});
+                    }
+                    this.selectBoxDims = null;
+                    this.selectBox = null;
+                    this.selectBoxValidate = null;
+                    this.tempSelectBox = null;
+                }
+            }, 100);
+        })
     }
 
     reset() {
@@ -229,6 +302,7 @@ class Grid {
     }
 
     draw() {
+        // console.log(this.mouseFunction)
         // set canvas zoom/pan locations
         this.canvas.height = this.canvasHeight;
         this.canvas.width = this.canvasWidth;
@@ -272,6 +346,19 @@ class Grid {
                 }
                 this.ctx.restore();
             }
+        }
+
+        // drawing the select box
+        if (this.tempSelectBox) {
+            const { x, y, w, h } = this.tempSelectBox;
+            this.ctx.save();
+            this.ctx.strokeStyle = 'red';
+            this.ctx.strokeRect(
+                x * this.cellSize,
+                y * this.cellSize,
+                this.cellSize * w,
+                this.cellSize * h);
+            this.ctx.restore();
         }
 
         // drawing the items

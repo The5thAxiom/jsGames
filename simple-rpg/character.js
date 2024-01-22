@@ -1,5 +1,5 @@
 import GridObject from "./gridObject.js";
-import {id, gridDistance, sizeToBlocks } from "./utils.js";
+import {id, gridDistance, gridDistanceBetweenBoxes } from "./utils.js";
 
 class Character extends GridObject{
     constructor(name, level, options) {
@@ -18,6 +18,7 @@ class Character extends GridObject{
         <button id="go-7">↖</button> <button id="go-8">↑</button> <button id="go-9">↗</button><br />
         <button id="go-4">←</button> <button id="go-5">.</button> <button id="go-6">→</button><br />
         <button id="go-1">↙</button><button id="go-2">↓</button><button id="go-3">↘</button>
+        <button id="move">Move</button>
         `;
         this.listeners = [];
         for (let i = 1; i <= 9; i++) {
@@ -25,6 +26,19 @@ class Character extends GridObject{
             id(`go-${i}`).addEventListener('click', listener);
             this.listeners.push(listener);
         }
+        id('move').addEventListener('click',e =>  this.moveToSelectedCells(e));
+    }
+
+    async moveToSelectedCells(e) {
+        const { x, y, w, h, canceled } = await this.grid.getBox(this.width, this.height, (x, y, w, h) => {
+            const distance = gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
+            return this.grid.canPlace(this, x, y) && distance <= this.remainingMovement;
+        })
+        if (canceled) return;
+        // console.log({x, y})
+        this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
+        this.grid.remove(this);
+        this.grid.place(this, x, y);
     }
 
     unSelect() {
