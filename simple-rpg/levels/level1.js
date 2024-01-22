@@ -38,46 +38,41 @@ function getLevel1(canvas, statsDiv) {
     // setting up the NPCs
     new Character('Bug A', level, {
         imageUrl: "./assets/bug.png",
-        speed: 2,
+        speed: 3,
         size: 'small',
         maxHP: 15,
-        currentHP: 15,
         defaultLocation: { x: 10, y: 3 }
     });
 
     new Character('Bug B', level, {
         imageUrl: "./assets/bug.png",
-        speed: 2,
+        speed: 3,
         size: 'small',
         maxHP: 15,
-        currentHP: 15,
         defaultLocation: { x: 7, y: 3 }
     });
 
     new Character('Bug C', level, {
         imageUrl: "./assets/bug.png",
-        speed: 2,
+        speed: 3,
         size: 'small',
         maxHP: 15,
-        currentHP: 15,
         defaultLocation: { x: 8, y: 4 }
     });
 
     new Character('Bug D', level, {
         imageUrl: "./assets/bug.png",
-        speed: 2,
+        speed: 3,
         size: 'small',
         maxHP: 15,
-        currentHP: 15,
         defaultLocation: { x: 9, y: 4 }
     });
 
     new Character('Armour Devourer', level, {
         imageUrl: "./assets/armour-devourer.png",
-        speed: 2,
-        size: 'small',
-        maxHP: 15,
-        currentHP: 15,
+        speed: 4,
+        size: 'medium',
+        maxHP: 20,
         defaultLocation: { x: 8, y: 2 }
     });
 
@@ -86,26 +81,23 @@ function getLevel1(canvas, statsDiv) {
         imageUrl: "./assets/knight.png",
         speed: 2,
         size: 'medium',
-        maxHP: 15,
-        currentHP: 15,
+        maxHP: 30,
         defaultLocation: { x: 8, y: 7 }
     });
 
     new Character('Mage', level, {
         imageUrl: "./assets/mage.png",
-        speed: 2,
+        speed: 3,
         size: 'medium',
-        maxHP: 15,
-        currentHP: 15,
+        maxHP: 10,
         defaultLocation: { x: 9, y: 9 }
     });
 
     new Character('Cleric', level, {
         imageUrl: "./assets/cleric.png",
-        speed: 2,
+        speed: 4,
         size: 'medium',
         maxHP: 15,
-        currentHP: 15,
         defaultLocation: { x: 8, y: 9 }
     });
 
