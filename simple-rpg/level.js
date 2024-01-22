@@ -1,17 +1,15 @@
 import Grid from "./grid.js";
 
 class Level {
-    constructor(name, container, {mapUrl, width, height, cellSize, statsDiv, isOccupied}) {
+    constructor(name, canvas, statsDiv, {mapUrl, width, height, cellSize, isOccupied}) {
         this.name = name;
-        this.container = container;
+        this.canvas = canvas;
         this.height = height;
         this.width = width;
         this.cellSize = cellSize;
         this.mapUrl = mapUrl;
         this.statsDiv = statsDiv;
 
-        this.canvas = document.createElement('canvas');
-        this.container.appendChild(this.canvas);
         this.grid = new Grid(this.canvas, {
             height: this.height,
             width: this.width,

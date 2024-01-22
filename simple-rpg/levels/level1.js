@@ -2,13 +2,12 @@ import Character from "../character.js";
 import GridObject from "../gridObject.js";
 import Level from "../level.js";
 
-function getLevel1(container, statsDiv) {
-    const level = new Level('Level 1', container, {
-        mapUrl: 'https://shacknews-ugc.s3.us-east-2.amazonaws.com/user/196763/article-inline/2020-12/Laboratory.png',//?versionId=QbMnTMGa0Um7Rl0ygUPSwjM6yclxKVuC'
-        statsDiv: statsDiv,
+function getLevel1(canvas, statsDiv) {
+    const level = new Level('Level 1', canvas, statsDiv, {
+        mapUrl: 'https://shacknews-ugc.s3.us-east-2.amazonaws.com/user/196763/article-inline/2020-12/Laboratory.png',
         height: 14,
         width: 18,
-        cellSize: 100
+        cellSize: 25
     });
 
     // setting up the environment
