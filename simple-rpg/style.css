@@ -4,7 +4,7 @@
     user-select: none;
 }
 
-#highlighted-object {
+#controls {
     position: fixed;
     right: 5em;
     top: 5em;

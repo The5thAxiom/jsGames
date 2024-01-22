@@ -8,7 +8,7 @@ class GridObject {
         this.width = options.width;
         this.imageUrl = options.imageUrl;
         this.image = new Image();
-        this.image.src = this.imageUrl;
+        if (this.imageUrl) this.image.src = this.imageUrl;
         this.selected = false;
         this.highlighted = false;
     }
@@ -44,13 +44,13 @@ class GridObject {
     }
 
     draw() {
-        if (this.image === null) return;
-        
-        this.grid.ctx.drawImage(
-            this.image,
-            this.x * this.grid.cellSize, this.y * this.grid.cellSize,
-            this.width * this.grid.cellSize, this.height * this.grid.cellSize
-        );
+        if (this.imageUrl) {
+            this.grid.ctx.drawImage(
+                this.image,
+                this.x * this.grid.cellSize, this.y * this.grid.cellSize,
+                this.width * this.grid.cellSize, this.height * this.grid.cellSize
+            );
+        }
 
         if (this.selected) {
             this.drawBorder('red');

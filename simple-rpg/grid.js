@@ -1,5 +1,5 @@
 class Grid {
-    constructor(canvas, {height, width, cellSize, frameRate}, {lineColor, fillColor}) {
+    constructor(canvas, {height, width, cellSize, frameRate}, {lineColor, fillColor, mapUrl}) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
 
@@ -18,10 +18,18 @@ class Grid {
         this.canvas.style.height = this.cellSize * this.height;
         this.canvas.style.width = this.cellSize * this.width;
 
+        this.setMap(mapUrl)
+
         this.reset()
 
         this.canvas.addEventListener('click', e => this.onGridClick(e))
         this.canvas.addEventListener('mousemove', e => this.onGridHover(e))
+    }
+
+    setMap(mapUrl) {
+        this.mapUrl = mapUrl;
+        this.map = new Image();
+        this.map.src = this.mapUrl;
     }
 
     onGridClick(e) {
@@ -51,7 +59,7 @@ class Grid {
             for (let i = 0; i < this.height; i++) {
                 let temp = [];
                 for (let j = 0; j < this.width; j++) {
-                    temp.push(this.fillColor);
+                    temp.push(null);
                 }
                 this.cellColors.push(temp);
             }
@@ -137,10 +145,19 @@ class Grid {
 
     draw() {
         // console.log(this.loc)
+        // draw the map
+        if (this.mapUrl) {
+            this.ctx.drawImage(
+                this.map,
+                0, 0,
+                this.cellSize * this.width, this.cellSize * this.height
+            );
+        }
+
         // drawing the boxes
         for (let yi = 0; yi < this.height; yi++) {
             for (let xi = 0; xi < this.width; xi++) {
-                this.ctx.fillStyle = this.cellColors[yi][xi];
+                this.ctx.save();
                 this.ctx.strokeStyle = this.lineColor;
                 this.ctx.strokeRect(
                     xi * this.cellSize,
@@ -148,12 +165,16 @@ class Grid {
                     this.cellSize,
                     this.cellSize
                 );
+                if (this.mapUrl) this.ctx.globalAlpha = 0.2;
+
+                this.ctx.fillStyle = this.cellColors[yi][xi];
                 this.ctx.fillRect(
                     xi * this.cellSize,
                     yi * this.cellSize,
                     this.cellSize,
                     this.cellSize
                 );
+                this.ctx.restore();
             }
         }
 
