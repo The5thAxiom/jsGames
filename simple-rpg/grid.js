@@ -36,21 +36,26 @@ class Grid {
         this.cameraZoom = 1;
         this.scrollSensitivity = 0.0005;
 
-        this.isDragging = false;
+        /*
+        free: can select/highlight object or zoom/pan
+        panning: can pan the canvas
+        select: can only highlight the squares below
+        */
+        this.mouseFunction = 'free';
         this.dragStart = { x: 0, y: 0 };
 
         this.canvas.addEventListener('click', e => this.onGridClick(e));
         this.canvas.addEventListener('mousemove', e => this.onMouseMove(e));
-        this.canvas.addEventListener('mousedown', e => this.onMouseDown(e));
-        this.canvas.addEventListener('mouseup', e => this.onMouseUp(e));
-        this.canvas.addEventListener('mouseleave', e => this.onMouseUp(e));
+        this.canvas.addEventListener('mousedown', e => this.startPanning(e));
+        this.canvas.addEventListener('mouseup', e => this.endPanning(e));
+        this.canvas.addEventListener('mouseleave', e => this.endPanning(e));
         this.canvas.addEventListener('wheel', e => this.onScroll(e));
     }
 
     onScroll(e) {
         if (!this.isDragging) {
             const zoomAmount = e.deltaY * this.scrollSensitivity
-            console.log(`zooming: ${zoomAmount}`);
+            // console.log(`zooming: ${zoomAmount}`);
             if (zoomAmount) {
                 this.cameraZoom -= zoomAmount;
             }
@@ -62,16 +67,16 @@ class Grid {
         }
     }
 
-    onMouseDown(e) {
-        console.log('start dragging');
-        this.isDragging = true;
+    startPanning(e) {
+        // console.log('start dragging');
+        this.mouseFunction = 'panning';
         this.dragStart.x = e.clientX / this.cameraZoom - this.cameraOffset.x;
         this.dragStart.y = e.clientY / this.cameraZoom - this.cameraOffset.y;
     }
 
-    onMouseUp(e) {
-        console.log('end dragging');
-        this.isDragging = false;
+    endPanning(e) {
+        // console.log('end dragging');
+        this.mouseFunction = 'free';
         this.lastZoom = this.cameraZoom;
     }
 
@@ -82,7 +87,8 @@ class Grid {
     }
 
     onGridClick(e) {
-        console.log('clicked')
+        // console.log('clicked')
+        if (this.mouseFunction !== 'free') return;
         for (let placedItem of this.items) {
             placedItem.unSelect();
         }
@@ -96,21 +102,23 @@ class Grid {
 
     onMouseMove(e) {
         const { x, y, outOfBounds } = this.getCellUnderMouse(e);
-        if (outOfBounds) return;
-        if (this.occupiedBy[y][x]) this.canvas.style.cursor = 'pointer';
-        else this.canvas.style.cursor = 'move';
-        if (this.isDragging) {
-            this.cameraOffset.x = e.clientX / this.cameraZoom - this.dragStart.x;
-            this.cameraOffset.y = e.clientY / this.cameraZoom - this.dragStart.y;
-            console.log({xo: this.cameraOffset.x, yo: this.cameraOffset.y})
-        } else {
+        if (this.mouseFunction === 'free' && !outOfBounds) {
+            // unhighlight everything
             for (let placedItem of this.items) {
                 placedItem.unHighlight();
             }
-            const clickedItem = this.occupiedBy[y][x];
-            if (clickedItem !== null) {
-                clickedItem.highlight()
+            // get the item over which the mouse is and highlight it
+            const hoveredItem = this.occupiedBy[y][x];
+            if (hoveredItem) {
+                this.canvas.style.cursor = 'pointer';
+                hoveredItem.highlight()
             }
+            else this.canvas.style.cursor = 'move';
+        } else if (this.mouseFunction === 'panning') {
+            this.cameraOffset.x = e.clientX / this.cameraZoom - this.dragStart.x;
+            this.cameraOffset.y = e.clientY / this.cameraZoom - this.dragStart.y;
+            // console.log({xo: this.cameraOffset.x, yo: this.cameraOffset.y})
+        } else if (this.mouseFunction === 'select') {
         }
     }
 
@@ -133,10 +141,7 @@ class Grid {
 
         const x = Number.parseInt((e.clientX - currentCanvasLeft) / currentCellSize);
         const y = Number.parseInt((e.clientY - currentCanvasTop) / currentCellSize);
-        /*
-            -this.canvasWidth / 2 + this.cameraOffset.x,
-            -this.canvasHeight / 2 + this.cameraOffset.y
-        */
+
         const outOfBounds = x >= this.width || e.clientX < currentCanvasLeft || y >= this.height || e.clientY < currentCanvasTop;
         
         // don't remove this: debugging this function to account for the zoom and pan was tough, you may need this later
