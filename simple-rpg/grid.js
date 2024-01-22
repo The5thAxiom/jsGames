@@ -5,23 +5,74 @@ class Grid {
 
         this.height = height;
         this.width = width;
-        this.cellSize = cellSize;
+        this.cellSize = window.innerWidth / this.width;
+
+        this.canvasHeight = window.innerHeight;
+        this.canvasWidth = window.innerWidth;
+
+        this.mapHeight = this.cellSize * this.height;
+        this.mapWidth = this.cellSize * this.width;
+
+        this.canvas.height = this.canvasHeight;
+        this.canvas.width = this.canvasWidth;
+
         this.frameRate = frameRate;
         this.lineColor = lineColor;
         this.fillColor = fillColor;
 
         this.ctx.fillStyle = '#000000';
-        this.canvas.height = this.cellSize * this.height;
-        this.canvas.width = this.cellSize * this.width;
-        this.canvas.style.height = this.cellSize * this.height;
-        this.canvas.style.width = this.cellSize * this.width;
 
         this.setMap(mapUrl)
 
-        this.reset()
+        this.reset();
 
-        this.canvas.addEventListener('click', e => this.onGridClick(e))
-        this.canvas.addEventListener('mousemove', e => this.onGridHover(e))
+        // code to implement pan and zoom adapted from: https://codepen.io/chengarda/pen/wRxoyB?editors=0010
+        this.cameraOffset = {
+            x: 0,
+            y: 0
+        };
+        this.maxZoom = 5;
+        this.minZoom = 0.1;
+        this.cameraZoom = 1;
+        this.scrollSensitivity = 0.0005;
+
+        this.isDragging = false;
+        this.dragStart = { x: 0, y: 0 };
+
+        this.canvas.addEventListener('click', e => this.onGridClick(e));
+        this.canvas.addEventListener('mousemove', e => this.onMouseMove(e));
+        this.canvas.addEventListener('mousedown', e => this.onMouseDown(e));
+        this.canvas.addEventListener('mouseup', e => this.onMouseUp(e));
+        this.canvas.addEventListener('mouseleave', e => this.onMouseUp(e));
+        this.canvas.addEventListener('wheel', e => this.onScroll(e));
+    }
+
+    onScroll(e) {
+        if (!this.isDragging) {
+            const zoomAmount = e.deltaY * this.scrollSensitivity
+            console.log(`zooming: ${zoomAmount}`);
+            if (zoomAmount) {
+                this.cameraZoom -= zoomAmount;
+            }
+            // else if (zoomFactor) {
+                // this.cameraZoom = this.zoomFactor * this.lastZoom;
+            // }
+            this.cameraZoom = Math.min(this.cameraZoom, this.maxZoom);
+            this.cameraZoom = Math.max(this.cameraZoom, this.minZoom);
+        }
+    }
+
+    onMouseDown(e) {
+        console.log('start dragging');
+        this.isDragging = true;
+        this.dragStart.x = e.clientX / this.cameraZoom - this.cameraOffset.x;
+        this.dragStart.y = e.clientY / this.cameraZoom - this.cameraOffset.y;
+    }
+
+    onMouseUp(e) {
+        console.log('end dragging');
+        this.isDragging = false;
+        this.lastZoom = this.cameraZoom;
     }
 
     setMap(mapUrl) {
@@ -31,24 +82,35 @@ class Grid {
     }
 
     onGridClick(e) {
+        console.log('clicked')
         for (let placedItem of this.items) {
             placedItem.unSelect();
         }
-        const { x, y } = this._getCurrentCell(e);
+        const { x, y, outOfBounds } = this.getCellUnderMouse(e);
+        if (outOfBounds) return;
         const clickedItem = this.occupiedBy[y][x];
         if (clickedItem !== null) {
             clickedItem.select()
         }
     }
 
-    onGridHover(e) {
-        for (let placedItem of this.items) {
-            placedItem.unHighlight();
-        }
-        const { x, y } = this._getCurrentCell(e);
-        const clickedItem = this.occupiedBy[y][x];
-        if (clickedItem !== null) {
-            clickedItem.highlight()
+    onMouseMove(e) {
+        const { x, y, outOfBounds } = this.getCellUnderMouse(e);
+        if (outOfBounds) return;
+        if (this.occupiedBy[y][x]) this.canvas.style.cursor = 'pointer';
+        else this.canvas.style.cursor = 'move';
+        if (this.isDragging) {
+            this.cameraOffset.x = e.clientX / this.cameraZoom - this.dragStart.x;
+            this.cameraOffset.y = e.clientY / this.cameraZoom - this.dragStart.y;
+            console.log({xo: this.cameraOffset.x, yo: this.cameraOffset.y})
+        } else {
+            for (let placedItem of this.items) {
+                placedItem.unHighlight();
+            }
+            const clickedItem = this.occupiedBy[y][x];
+            if (clickedItem !== null) {
+                clickedItem.highlight()
+            }
         }
     }
 
@@ -63,11 +125,31 @@ class Grid {
             }
     }
 
-    _getCurrentCell(e) {
+    getCellUnderMouse(e) {
         const rect = this.canvas.getBoundingClientRect();
-        const x = Number.parseInt((e.clientX - rect.left) / this.cellSize);
-        const y = Number.parseInt((e.clientY - rect.top) / this.cellSize);
-        return { x, y };
+        const currentCellSize = this.cellSize * this.cameraZoom;
+        const currentCanvasLeft = (rect.left + this.cameraOffset.x * this.cameraZoom);
+        const currentCanvasTop = (rect.top + this.cameraOffset.y * this.cameraZoom);
+
+        const x = Number.parseInt((e.clientX - currentCanvasLeft) / currentCellSize);
+        const y = Number.parseInt((e.clientY - currentCanvasTop) / currentCellSize);
+        /*
+            -this.canvasWidth / 2 + this.cameraOffset.x,
+            -this.canvasHeight / 2 + this.cameraOffset.y
+        */
+        const outOfBounds = x >= this.width || e.clientX < currentCanvasLeft || y >= this.height || e.clientY < currentCanvasTop;
+        
+        // don't remove this: debugging this function to account for the zoom and pan was tough, you may need this later
+        // console.log({
+        //     mx: e.clientX,
+        //     my: e.clientY,
+        //     // x, y,
+        //     oob: outOfBounds,
+        //     // ccs: currentCellSize,
+        //     ccl: currentCanvasLeft, cct: currentCanvasTop,
+        //     xo: this.cameraOffset.x, yo: this.cameraOffset.y, cz: this.cameraZoom
+        // });
+        return { x, y, outOfBounds};
     }
 
     reset() {
@@ -142,7 +224,16 @@ class Grid {
     }
 
     draw() {
-        // console.log(this.loc)
+        // set canvas zoom/pan locations
+        this.canvas.height = this.canvasHeight;
+        this.canvas.width = this.canvasWidth;
+
+        // this.ctx.translate(this.canvasWidth / 2, this.canvasHeight / 2);
+        this.ctx.scale(this.cameraZoom, this.cameraZoom);
+        this.ctx.translate(this.cameraOffset.x, this.cameraOffset.y)
+
+        // this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
         // draw the map
         if (this.mapUrl) {
             this.ctx.drawImage(
@@ -187,6 +278,7 @@ class Grid {
                 }
             }
         }
+        // requestAnimationFrame(this.draw.bind(this))
     }
 }
 

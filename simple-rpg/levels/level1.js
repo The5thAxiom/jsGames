@@ -7,7 +7,7 @@ function getLevel1(canvas, statsDiv) {
         mapUrl: 'https://shacknews-ugc.s3.us-east-2.amazonaws.com/user/196763/article-inline/2020-12/Laboratory.png',
         height: 14,
         width: 18,
-        cellSize: 25
+        cellSize: 100
     });
 
     // setting up the environment
@@ -72,7 +72,7 @@ function getLevel1(canvas, statsDiv) {
         defaultLocation: { x: 9, y: 4 }
     });
 
-    new Character('Bug D', level, {
+    new Character('Armour Devourer', level, {
         imageUrl: "./assets/armour-devourer.png",
         speed: 2,
         size: 'small',
