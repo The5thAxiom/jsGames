@@ -9,6 +9,22 @@ function getLevel1(canvas, controlsDiv) {
         height: 14,
         width: 18,
         cellSize: 100,
+        walls: [
+            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], // 0
+            [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, true, true], //1
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 2
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 3
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 4
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 5
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 6
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 7
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 8
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 9
+            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 10
+            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 11
+            [true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, true, true],// 12
+            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true] // 13
+        ]
     });
 
     level.setEnvironmentObjects([

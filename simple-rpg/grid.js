@@ -1,11 +1,16 @@
+import GridObject from "./gridObject.js";
+
 class Grid {
-    constructor(canvas, {height, width, cellSize, frameRate}, {lineColor, fillColor, mapUrl}) {
+    constructor(canvas, {height, width, cellSize, frameRate, walls}, {lineColor, fillColor, mapUrl}) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
 
         this.height = height;
         this.width = width;
         this.cellSize = window.innerWidth / this.width;
+
+        this.walls = walls;
+        this.wall = new GridObject('Wall', this, { size: 'medium'});
 
         this.canvasHeight = window.innerHeight;
         this.canvasWidth = window.innerWidth;
@@ -246,7 +251,8 @@ class Grid {
         for (let yi = 0; yi < this.height; yi++) {
             let temp = [];
             for (let xi = 0; xi < this.width; xi++) {
-                temp.push(null);
+                if (this.walls[yi][xi]) temp.push(this.wall);
+                else temp.push(null);
             }
             this.occupiedBy.push(temp);
         }

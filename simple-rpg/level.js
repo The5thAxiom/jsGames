@@ -2,19 +2,21 @@ import Grid from "./grid.js";
 import { id } from "./utils.js";
 
 class Level {
-    constructor(name, canvas, controlsDiv, {mapUrl, width, height, cellSize, environmentObjects, monsters, players}) {
+    constructor(name, canvas, controlsDiv, {mapUrl, width, height, cellSize, walls}) {
         this.name = name;
         this.canvas = canvas;
         this.height = height;
         this.width = width;
         this.cellSize = cellSize;
         this.mapUrl = mapUrl;
+        this.walls = walls;
 
         this.grid = new Grid(this.canvas, {
             height: this.height,
             width: this.width,
             cellSize: this.cellSize,
             frameRate: 60,
+            walls: this.walls
         }, {
             lineColor: 'black',
             mapUrl: this.mapUrl
