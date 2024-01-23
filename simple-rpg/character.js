@@ -22,8 +22,8 @@ class Character extends GridObject{
         for (let handler of this.turnStartHandlers) {
             handler(this)
         }
-        this.remainingActions = options.remainingActions || this.maxActions;
-        this.remainingMovement = options.speed;
+        this.remainingActions = this.maxActions;
+        this.remainingMovement = this.speed;
         for (let handler of this.turnStartHandlers) {
             handler(this)
         }
@@ -68,8 +68,12 @@ class Character extends GridObject{
         if (this.currentHP <= 0) this.grid.remove(this)
     }
     
-    heal(value) {
-        this.currentHP = Math.min(this.maxHP, this.currentHP + value);
+    heal(type, value) {
+        if (type == 'HP') {
+            this.currentHP = Math.min(this.maxHP, this.currentHP + value);
+        } else if (type == 'Armor') {
+            this.currentArmor = Math.min(this.maxArmor, this.currentArmor + value);
+        }
     }
 
     async performAction(i) {
