@@ -5,9 +5,28 @@ class Character extends GridObject{
     constructor(name, level, options) {
         super(name, level, options);
         this.speed = options.speed;
-        this.remainingMovement = options.speed;
         this.maxHP = options.maxHP;
         this.currentHP = options.currentHP || options.maxHP;
+        this.maxArmor = options.maxArmor;
+        this.currentArmor = options.currentArmor || options.maxArmor;
+        this.actions = options.actions;
+        this.maxActions = options.maxActions || 1;
+        this.remainingActions = options.remainingActions || this.maxActions;
+        this.conditions = [];
+        this.turnStartHandlers = [];
+        this.turnEndHandlers = [];
+        this.newTurn();
+    }
+
+    newTurn() {
+        for (let handler of this.turnStartHandlers) {
+            handler(this)
+        }
+        this.remainingActions = options.remainingActions || this.maxActions;
+        this.remainingMovement = options.speed;
+        for (let handler of this.turnStartHandlers) {
+            handler(this)
+        }
     }
 
     updateStatsDiv() {
@@ -15,18 +34,59 @@ class Character extends GridObject{
         this.statsDiv.innerHTML += `
         Speed: ${this.remainingMovement}/${this.speed} blocks <br />
         HP: ${this.currentHP}/${this.maxHP} <br />
-        <button id="go-7">↖</button> <button id="go-8">↑</button> <button id="go-9">↗</button><br />
-        <button id="go-4">←</button> <button id="go-5">.</button> <button id="go-6">→</button><br />
-        <button id="go-1">↙</button><button id="go-2">↓</button><button id="go-3">↘</button>
-        <button id="move">Move</button>
+        ${!!this.maxArmor ? `Armor: ${this.currentArmor}/${this.maxArmor}` : ''}
+        <button id="move">Move</button> <br />
+        Actions: ${this.remainingActions}/${this.maxActions}<br />
+        <ul>
         `;
-        this.listeners = [];
-        for (let i = 1; i <= 9; i++) {
-            const listener = this.moveCharacter.bind(this, event, i);
-            id(`go-${i}`).addEventListener('click', listener);
-            this.listeners.push(listener);
+        for (let i in this.actions) {
+            const action = this.actions[i];
+            this.statsDiv.innerHTML += `<li><button id="action-${i}">${action.name}</button>: ${action.description}</li>`
         }
-        id('move').addEventListener('click',e =>  this.moveToSelectedCells(e));
+        this.statsDiv.innerHTML += '</u>';
+        id('move').addEventListener('click', e => this.moveToSelectedCells(e));
+        for (let i in this.actions) {
+            const action = this.actions[i];
+            id(`action-${i}`).addEventListener('click', () => this.performAction(i));
+        }
+
+        // `
+        // <button id="go-7">↖</button> <button id="go-8">↑</button> <button id="go-9">↗</button><br />
+        // <button id="go-4">←</button> <button id="go-5">.</button> <button id="go-6">→</button><br />
+        // <button id="go-1">↙</button><button id="go-2">↓</button><button id="go-3">↘</button>
+        // `
+        // this.listeners = [];
+        // for (let i = 1; i <= 9; i++) {
+        //     const listener = this.moveCharacter.bind(this, event, i);
+        //     id(`go-${i}`).addEventListener('click', listener);
+        //     this.listeners.push(listener);
+        // }
+    }
+
+    damage(type, value) {
+        this.currentHP -= value;
+        if (this.currentHP <= 0) this.grid.remove(this)
+    }
+    
+    heal(value) {
+        this.currentHP = Math.min(this.maxHP, this.currentHP + value);
+    }
+
+    async performAction(i) {
+        const action = this.actions[i];
+
+        const { x, y, canceled } = await this.grid.getBox(1, 1, (x, y, w, h) => {
+            return gridDistance(this.x, this.y, x, y) <= action.range && this.grid.occupiedBy[y][x] instanceof Character;
+        })
+        if (canceled) return;
+        
+        const target = this.grid.occupiedBy[y][x];
+        console.log(`${this.name} used ${action.name} on ${target.name}`);
+
+        action.effect(target);
+
+        this.remainingActions--;
+        this.updateStatsDiv();
     }
 
     async moveToSelectedCells(e) {
@@ -44,9 +104,9 @@ class Character extends GridObject{
     unSelect() {
         super.unSelect();
 
-        for (let i in this.buttonListeners) {
-            id(`go-${i}`).removeEventListener('click', this.listeners[i]);
-        }
+        // for (let i in this.buttonListeners) {
+        //     id(`go-${i}`).removeEventListener('click', this.listeners[i]);
+        // }
     }
 
     moveCharacter(e, dir) {

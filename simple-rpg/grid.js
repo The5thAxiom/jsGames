@@ -147,6 +147,7 @@ class Grid {
             } else {
                 this.tempSelectBox = null;
             }
+            // console.log(this.tempSelectBox)
         }
     }
 
@@ -225,6 +226,7 @@ class Grid {
                     this.selectBox = null;
                     this.selectBoxValidate = null;
                     this.tempSelectBox = null;
+                    clearInterval(keepChecking);
                 }
             }, 100);
         })

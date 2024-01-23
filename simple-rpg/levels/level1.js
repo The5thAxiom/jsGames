@@ -1,6 +1,7 @@
 import Character from "../character.js";
 import GridObject from "../gridObject.js";
 import Level from "../level.js";
+import Action from "../action.js"
 
 function getLevel1(canvas, statsDiv) {
     const level = new Level('Level 1', canvas, statsDiv, {
@@ -40,32 +41,64 @@ function getLevel1(canvas, statsDiv) {
         imageUrl: "./assets/bug.png",
         speed: 3,
         size: 'small',
-        maxHP: 15,
-        defaultLocation: { x: 10, y: 3 }
+        maxHP: 5,
+        defaultLocation: { x: 10, y: 3 },
+        actions: [
+            new Action('Bite', {
+                description: 'Bites the target to do 2 points fo piercing damage',
+                type: 'melee',
+                range: 1,
+                effect: target => target.damage('piercing', 2)
+            })
+        ]
     });
 
     new Character('Bug B', level, {
         imageUrl: "./assets/bug.png",
         speed: 3,
         size: 'small',
-        maxHP: 15,
-        defaultLocation: { x: 7, y: 3 }
+        maxHP: 5,
+        defaultLocation: { x: 7, y: 3 },
+        actions: [
+            new Action('Bite', {
+                description: 'Bites the target to do 2 points fo piercing damage',
+                type: 'melee',
+                range: 1,
+                effect: target => target.damage('piercing', 2)
+            })
+        ]
     });
 
     new Character('Bug C', level, {
         imageUrl: "./assets/bug.png",
         speed: 3,
         size: 'small',
-        maxHP: 15,
-        defaultLocation: { x: 8, y: 4 }
+        maxHP: 5,
+        defaultLocation: { x: 8, y: 4 },
+        actions: [
+            new Action('Bite', {
+                description: 'Bites the target to do 2 points fo piercing damage',
+                type: 'melee',
+                range: 1,
+                effect: target => target.damage('piercing', 2)
+            })
+        ]
     });
 
     new Character('Bug D', level, {
         imageUrl: "./assets/bug.png",
         speed: 3,
         size: 'small',
-        maxHP: 15,
-        defaultLocation: { x: 9, y: 4 }
+        maxHP: 5,
+        defaultLocation: { x: 9, y: 4 },
+        actions: [
+            new Action('Bite', {
+                description: 'Bites the target to do 2 points fo piercing damage',
+                type: 'melee',
+                range: 1,
+                effect: target => target.damage('piercing', 2)
+            })
+        ]
     });
 
     new Character('Armour Devourer', level, {
@@ -73,7 +106,18 @@ function getLevel1(canvas, statsDiv) {
         speed: 4,
         size: 'medium',
         maxHP: 20,
-        defaultLocation: { x: 8, y: 2 }
+        defaultLocation: { x: 8, y: 2 },
+        actions: [
+            new Action('Bite', {
+                description: 'Bites the target fiercely to do 5 points of piercing damage and removes 3 points of armor',
+                type: 'melee',
+                range: 1,
+                effect: target => {
+                    target.damage('piercing', 5);
+                    if (target.currentArmor && target.currentArmor > 0) target.currentArmor = Math.max(0, target.currentArmor - 3);
+                }
+            })
+        ]
     });
 
     // setting up the PCs
@@ -81,8 +125,17 @@ function getLevel1(canvas, statsDiv) {
         imageUrl: "./assets/knight.png",
         speed: 2,
         size: 'medium',
-        maxHP: 30,
-        defaultLocation: { x: 8, y: 7 }
+        maxHP: 15,
+        maxArmor: 15,
+        defaultLocation: { x: 8, y: 7 },
+        actions: [
+            new Action('Sword', {
+                description: 'Slashes a sword at the target to deal 3 points of slashing damage',
+                type: 'melee',
+                range: 1,
+                effect: target => target.damage('slashing', 3)
+            })
+        ]
     });
 
     new Character('Mage', level, {
@@ -90,7 +143,15 @@ function getLevel1(canvas, statsDiv) {
         speed: 3,
         size: 'medium',
         maxHP: 10,
-        defaultLocation: { x: 9, y: 9 }
+        defaultLocation: { x: 9, y: 9 },
+        actions: [
+            new Action('Arcane Bolt', {
+                description: 'Shoots a bolt of arcane energy at the target upto 4 blocks away to do 2 points of magical damage',
+                type: 'rangedSingleTarget',
+                range: 4,
+                effect: target => target.damage('magical', 2)
+            })
+        ]
     });
 
     new Character('Cleric', level, {
@@ -98,7 +159,20 @@ function getLevel1(canvas, statsDiv) {
         speed: 4,
         size: 'medium',
         maxHP: 15,
-        defaultLocation: { x: 8, y: 9 }
+        defaultLocation: { x: 8, y: 9 },
+        actions: [
+            new Action('Bow', {
+                description: 'Shoots an arrow at the target upto 3 blocks away to do 1 piercing damage',
+                type: 'rangedSingleTarget',
+                range: 3,
+                effect: target => target.damage('peircing', 1)
+            }), new Action('Prayer', {
+                description: 'Sings a soothing prayer for one target upto 4 blocks away, healing them by 2 points of HP',
+                type: 'rangedSingleTarget',
+                range: 4,
+                effect: target => target.heal('HP', 2)
+            })
+        ]
     });
 
     return level
