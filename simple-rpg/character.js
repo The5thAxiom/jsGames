@@ -16,6 +16,18 @@ class Character extends GridObject{
         this.turnStartHandlers = [];
         this.turnEndHandlers = [];
         this.newTurn();
+
+        this.enabled = false;
+    }
+
+    enable() {
+        this.enabled = true;
+        this.updateStatsDiv();
+    }
+
+    disable() {
+        this.enabled = false;
+        this.updateStatsDiv();
     }
 
     newTurn() {
@@ -34,33 +46,28 @@ class Character extends GridObject{
         this.statsDiv.innerHTML += `
         Speed: ${this.remainingMovement}/${this.speed} blocks <br />
         HP: ${this.currentHP}/${this.maxHP} <br />
-        ${!!this.maxArmor ? `Armor: ${this.currentArmor}/${this.maxArmor}` : ''}
-        <button id="move">Move</button> <br />
-        Actions: ${this.remainingActions}/${this.maxActions}<br />
-        <ul>
-        `;
-        for (let i in this.actions) {
-            const action = this.actions[i];
-            this.statsDiv.innerHTML += `<li><button id="action-${i}">${action.name}</button>: ${action.description}</li>`
-        }
-        this.statsDiv.innerHTML += '</u>';
-        id('move').addEventListener('click', e => this.moveToSelectedCells(e));
-        for (let i in this.actions) {
-            const action = this.actions[i];
-            id(`action-${i}`).addEventListener('click', () => this.performAction(i));
+        ${!!this.maxArmor ? `Armor: ${this.currentArmor}/${this.maxArmor}` : ''} <br />`
+        
+        // show action and movement options only if enabled
+        if (this.enabled) {
+            this.statsDiv.innerHTML += `
+            <button id="move">Move</button> <br />
+            Actions: ${this.remainingActions}/${this.maxActions}<br />
+            <ul>
+            `;
+            for (let i in this.actions) {
+                const action = this.actions[i];
+                this.statsDiv.innerHTML += `<li><button id="action-${i}">${action.name}</button>: ${action.description}</li>`
+            }
+            this.statsDiv.innerHTML += '</u>';
+            id('move').addEventListener('click', e => this.moveToSelectedCells(e));
+            for (let i in this.actions) {
+                const action = this.actions[i];
+                id(`action-${i}`).addEventListener('click', () => this.performAction(i));
+            }
         }
 
-        // `
-        // <button id="go-7">↖</button> <button id="go-8">↑</button> <button id="go-9">↗</button><br />
-        // <button id="go-4">←</button> <button id="go-5">.</button> <button id="go-6">→</button><br />
-        // <button id="go-1">↙</button><button id="go-2">↓</button><button id="go-3">↘</button>
-        // `
-        // this.listeners = [];
-        // for (let i = 1; i <= 9; i++) {
-        //     const listener = this.moveCharacter.bind(this, event, i);
-        //     id(`go-${i}`).addEventListener('click', listener);
-        //     this.listeners.push(listener);
-        // }
+        this.level.updateTurnDiv();
     }
 
     damage(type, value) {
@@ -107,66 +114,36 @@ class Character extends GridObject{
 
     unSelect() {
         super.unSelect();
-
-        // for (let i in this.buttonListeners) {
-        //     id(`go-${i}`).removeEventListener('click', this.listeners[i]);
-        // }
     }
 
-    moveCharacter(e, dir) {
-        if (this.remainingMovement <= 0) return;
+    draw() {
+        super.draw();
 
-        if (dir == 5) {
-            // this.unSelect();
-            return;
+        // show the name
+        
+        this.grid.ctx.save();
+        this.grid.ctx.textAlign = 'center';
+        this.grid.fill = 'red';
+        this.grid.ctx.font = '15px sans-serif';
+        this.grid.ctx.fillText(
+            this.name,
+            this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
+            this.y * this.grid.cellSize + this.grid.cellSize, // below the icon
+        );
+        this.grid.ctx.restore();
+
+        if (this.highlighted) {
+            this.grid.ctx.save();
+            this.grid.ctx.textAlign = 'center';
+            this.grid.fill = 'red';
+            this.grid.ctx.font = '15px sans-serif';
+            this.grid.ctx.fillText(
+                `HP: ${this.currentHP}/${this.maxHP}${!!this.maxArmor ? ` | Armor: ${this.currentArmor}/${this.maxArmor}` : ''}`,
+                this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
+                this.y * this.grid.cellSize,
+            );
+            this.grid.ctx.restore();
         }
-
-        const x = this.x;
-        const y = this.y;
-        // console.log(this.grid);
-        let newX, newY;
-        if (dir == 1) {
-            newX = x - 1;
-            newY = y + 1;
-        } else if (dir == 2) {
-            newX = x;
-            newY = y + 1;
-        } else if (dir == 3) {
-            newX = x + 1;
-            newY = y + 1;
-        } else if (dir == 4) {
-            newX = x - 1;
-            newY = y;
-        } else if (dir == 6) {
-            newX = x + 1;
-            newY = y;
-        } else if (dir == 7) {
-            newX = x - 1;
-            newY = y - 1;
-        } else if (dir == 8) {
-            newX = x;
-            newY = y - 1;
-        } else if (dir == 9) {
-            newX = x + 1;
-            newY = y - 1;
-        }
-
-        // check if the new location is okay
-        // console.log({
-        //     x, y,
-        //     w: this.width, h: this.height,
-        //     gw: this.grid.width, gh: this.grid.height
-        // })
-        if (this.grid.canPlace(this, newX, newY)) {
-            this.grid.remove(this);
-            this.grid.place(this, newX, newY);
-            this.remainingMovement -= 1;
-            this.updateStatsDiv();
-        }
-    }
-
-    draw(x, y, width, height) {
-        super.draw(x, y, width, height);
 
         if (this.selected) {
             this.grid.resetCellColors()

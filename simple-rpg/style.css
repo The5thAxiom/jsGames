@@ -3,19 +3,29 @@ body {
     margin: 0;
     overflow: hidden;
 }
+
 canvas {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-#controls {
+#stats-div {
     position: fixed;
-    right: 5em;
-    top: 5em;
+    right: 2em;
+    top: 2em;
+}
+
+#turn-div {
+    position: fixed;
+    left: 2em;
+    top: 2em;
+}
+
+#controls > * {
     background-color: lightblue;
     padding-inline: 2em;
     padding-bottom: 2em;
     border-radius: 1em;
-    max-width: 15em;
+    max-width: 20em;
 }
