@@ -24,7 +24,42 @@ function gridDistanceBetweenBoxes(x1, y1, w1, h1, x2, y2, w2, h2) {
     // return minDist;
 }
 
-// function gridItemToPointDistance(item, x, y) {}
+function drawTextWithBox(ctx, text, x, y, {font, textFill, textStroke, boxFill, boxStroke}) {
+    if (!textFill) textFill = 'white';
+    if (!textStroke) textStroke = 'white';
+    if (!boxFill) boxFill = 'grey';
+    if (!boxStroke) boxStroke = 'grey';
+
+    ctx.save();
+    ctx.font = font;
+
+    const textMetrics = ctx.measureText(text)
+    const textWidth = textMetrics.width;
+    const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+    const textPadding = 2;
+    // draw box
+    ctx.fillStyle = boxFill;
+    ctx.strokeStyle = boxStroke;
+    ctx.beginPath();
+    ctx.roundRect(
+        x - textWidth / 2 - textPadding, y - textHeight / 2 - textPadding,
+        textWidth + textPadding, textHeight + textPadding,
+        3
+    );
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+
+    // draw text
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = textFill;
+    ctx.strokeStyle = textStroke;
+    ctx.fillText(text, x, y);
+    
+    ctx.restore();
+}
+
 
 const sizeToBlocks = {
     "tiny": 0.5,
@@ -34,4 +69,4 @@ const sizeToBlocks = {
     "huge": 3
 }
 
-export { id, gridDistance, gridDistanceBetweenBoxes, sizeToBlocks };
+export { id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, sizeToBlocks };

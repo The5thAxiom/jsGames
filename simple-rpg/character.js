@@ -1,5 +1,5 @@
 import GridObject from "./gridObject.js";
-import {id, gridDistance, gridDistanceBetweenBoxes } from "./utils.js";
+import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox } from "./utils.js";
 
 class Character extends GridObject{
     constructor(name, level, options) {
@@ -120,29 +120,24 @@ class Character extends GridObject{
         super.draw();
 
         // show the name
-        
-        this.grid.ctx.save();
-        this.grid.ctx.textAlign = 'center';
-        this.grid.fill = 'red';
-        this.grid.ctx.font = '15px sans-serif';
-        this.grid.ctx.fillText(
-            this.name,
+        drawTextWithBox(
+            this.grid.ctx, this.name,
             this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
             this.y * this.grid.cellSize + this.grid.cellSize, // below the icon
+            {
+                font: '10px sans- serif'
+            }
         );
-        this.grid.ctx.restore();
 
         if (this.highlighted) {
-            this.grid.ctx.save();
-            this.grid.ctx.textAlign = 'center';
-            this.grid.fill = 'red';
-            this.grid.ctx.font = '15px sans-serif';
-            this.grid.ctx.fillText(
-                `HP: ${this.currentHP}/${this.maxHP}${!!this.maxArmor ? ` | Armor: ${this.currentArmor}/${this.maxArmor}` : ''}`,
+            drawTextWithBox(
+                this.grid.ctx, `HP: ${this.currentHP}/${this.maxHP}${!!this.maxArmor ? ` | Armor: ${this.currentArmor}/${this.maxArmor}` : ''}`,
                 this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
                 this.y * this.grid.cellSize,
+                {
+                    font: '10px sans- serif'
+                }
             );
-            this.grid.ctx.restore();
         }
 
         if (this.selected) {
