@@ -122,40 +122,32 @@ class Character extends GridObject{
         // show the name
         drawTextWithBox(
             this.grid.ctx, this.name,
-            this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
-            this.y * this.grid.cellSize + this.grid.cellSize, // below the icon
+            this.x * this.grid.cellSize + (this.width * this.grid.cellSize) / 2, // center horizontally
+            (this.y + this.height - 1) * this.grid.cellSize + (this.height + this.grid.cellSize), // below the icon
             {
                 font: '10px sans- serif'
             }
         );
-
-        if (this.highlighted) {
-            drawTextWithBox(
-                this.grid.ctx, `HP: ${this.currentHP}/${this.maxHP}${!!this.maxArmor ? ` | Armor: ${this.currentArmor}/${this.maxArmor}` : ''}`,
-                this.x * this.grid.cellSize + this.grid.cellSize / 2, // center horizontally
-                this.y * this.grid.cellSize,
-                {
-                    font: '10px sans- serif'
-                }
-            );
-        }
 
         if (this.selected) {
             this.grid.resetCellColors()
             for (let yi = 0; yi < this.grid.height; yi++) {
                 for (let xi = 0; xi < this.grid.width; xi++) {
                     if (yi == this.y && xi == this.x) continue;
-                    if (
-                        (
+                    if ((
                             gridDistance(xi, yi, this.x, this.y) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x + this.width - 1, this.y + this.height - 1) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x, this.y + this.height - 1) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x + this.width - 1, this.y) <= this.remainingMovement
-                        )
-                        && this.grid.occupiedBy[yi][xi] === null
-                        // && this.grid.canPlace(this, xi, yi)
+                        )&& this.grid.occupiedBy[yi][xi] === null
                     ) {
-                        // the condition to be used above needs to be more complex (add it later)
+                        // for (let i = yi; i < yi + this.height; i++) {
+                        //     for (let j = xi; j < xi + this.width; j++) {
+                                // if (!this.grid.occupiedBy[i][j]) {
+                                    // this.grid.setCellFillColor(j, i, 'green');
+                                // }
+                        //     }
+                        // }
                         this.grid.setCellFillColor(xi, yi, 'green');
                     }
                 }

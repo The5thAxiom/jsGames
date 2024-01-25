@@ -36,44 +36,52 @@ class Level {
 
     updateTurnDiv() {
         this.turnDiv.innerHTML = `
-        <h2>Round ${this.roundCount}</h2>
-        ${this.playersTurn ? "Players'" : "Enemies'"} turn <br />
-        <button id="end-turn">End Turn</button>
+        <h1 id="game-title"><img src="assets/icon.png" /> Simple-RPG</h1>
         <hr />
-        <h3>Players</h3>
-        <ul>
+        <h2>Round ${this.roundCount}: ${this.playersTurn ? "Players'" : "Enemies'"} turn <br />
+        </h2>
+        <button id="end-turn">End Turn</button>
         `;
-        for (let player of this.players) {
-            this.turnDiv.innerHTML += `<li>${player.name}: `;
-            if (player.currentHP > 0) {
-                this.turnDiv.innerHTML += `HP: ${player.currentHP}/${player.maxHP}`;
-                if (player.maxArmor) {
-                    this.turnDiv.innerHTML += ` | Armor: ${player.currentArmor}/${player.maxArmor}`;
-                }
-            } else {
-                this.turnDiv.innerHTML += 'Dead';
-            }
-            this.turnDiv.innerHTML += '</li>';
-        }
-        this.turnDiv.innerHTML += '</ul>';
+        let textToAdd = '';
+        textToAdd += `
+            <hr />
+            <h3>Players</h3>
+            <div class="characters">
+                ${this.players.reduce((val, player) => val + `
+                    <div class="character">
+                        <img src="${player.imageUrl}" />
+                        <div class="info" >
+                            <div>${player.name}</div>
+                            ${player.currentHP > 0 ? `
+                                ${player.maxArmor ? `<div>Armor: <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress></div>` : ''}
+                                <div>HP: <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></div></progress>
+                            ` : 'Dead'}
+                        </div>
+                    </div>
+                `, '')}
+            </div>
+        `;
 
-        this.turnDiv.innerHTML += `
-        <h3>Players</h3>
-        <ul>
+        textToAdd += `
+            <hr />
+            <h3>Enemies</h3>
+            <div class="characters">
+                ${this.enemies.reduce((val, player) => val + `
+                    <div class="character">
+                        <img src="${player.imageUrl}" />
+                        <div class="info" >
+                            <div>${player.name}</div>
+                            ${player.currentHP > 0 ? `
+                                ${player.maxArmor ? `<div>Armor: <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress></div>` : ''}
+                                <div>HP: <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></div></progress>
+                            ` : 'Dead'}
+                        </div>
+                    </div>
+                `, '')}
+            </div>
         `;
-        for (let player of this.enemies) {
-            this.turnDiv.innerHTML += `<li>${player.name}: `;
-            if (player.currentHP > 0) {
-                this.turnDiv.innerHTML += `HP: ${player.currentHP}/${player.maxHP}`;
-                if (player.maxArmor) {
-                    this.turnDiv.innerHTML += ` | Armor: ${player.currentArmor}/${player.maxArmor}`;
-                }
-            } else {
-                this.turnDiv.innerHTML += 'Dead';
-            }
-            this.turnDiv.innerHTML += '</li>';
-        }
-            this.turnDiv.innerHTML += '</ul>';
+
+        this.turnDiv.innerHTML += textToAdd;
 
         id('end-turn').addEventListener('click', () => {
             this.playersTurn = !this.playersTurn;

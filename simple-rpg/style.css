@@ -4,6 +4,15 @@ body {
     overflow: hidden;
 }
 
+#game-title {
+    display: flex;
+    align-items: center;
+}
+
+#game-title > img {
+    height: 1em; width: 1em;
+}
+
 canvas {
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -12,14 +21,18 @@ canvas {
 
 #stats-div {
     position: fixed;
-    right: 2em;
-    top: 2em;
+    right: 0;
+    top: 0;
+    margin: 2em;
 }
 
 #turn-div {
     position: fixed;
-    left: 2em;
-    top: 2em;
+    left: 0;
+    top: 0;
+    margin: 2em;
+    max-height: calc(100vh - 6em);
+    overflow-y: scroll;
 }
 
 #controls > * {
@@ -28,4 +41,29 @@ canvas {
     padding-bottom: 2em;
     border-radius: 1em;
     max-width: 20em;
+}
+
+#controls > *:empty {
+    display: none;
+}
+
+.character {
+    display: flex;
+    align-items: center;
+    /* border: 1px solid; */
+    margin: 0.5em;
+}
+
+.character > .info {
+    padding: 0.25em;
+}
+
+.character > img {
+    display: block;
+    height: 4em;
+    aspect-ratio: 1/1;
+}
+
+.hp-bar {
+    accent-color: green;
 }

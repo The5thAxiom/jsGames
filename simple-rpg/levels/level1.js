@@ -163,6 +163,21 @@ function getLevel1(canvas, controlsDiv) {
                 })
             ]
         }),
+        new Character('Bug E', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 10, y: 4 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2)
+                })
+            ]
+        }),
         // new Character('Armour Devourer', level, {
         //     imageUrl: "./assets/armour-devourer.png",
         //     speed: 4,
