@@ -2,7 +2,7 @@ import Grid from "./grid.js";
 import { id } from "./utils.js";
 
 class Level {
-    constructor(name, canvas, controlsDiv, {mapUrl, width, height, cellSize, walls}) {
+    constructor(name, canvas, controlsDiv, {mapUrl, width, height, cellSize, walls, winCondition, loseCondition}) {
         this.name = name;
         this.canvas = canvas;
         this.height = height;
@@ -10,6 +10,9 @@ class Level {
         this.cellSize = cellSize;
         this.mapUrl = mapUrl;
         this.walls = walls;
+
+        this.winCondition = winCondition;
+        this.loseCondition = loseCondition;
 
         this.grid = new Grid(this.canvas, {
             height: this.height,
@@ -21,6 +24,8 @@ class Level {
             lineColor: 'black',
             mapUrl: this.mapUrl
         });
+
+        this.showGrid = true;
 
         this.controlsDiv = controlsDiv;
         this.turnDiv = document.createElement('div');
@@ -110,6 +115,20 @@ class Level {
     }
 
     newTurn() {
+        if (this.winCondition(this)) {
+            this.showGrid = false;
+            this.turnDiv.innerHTML == '';
+            this.statsDiv.innerHTML == '';
+            alert(`The players have won ${this.name}`);
+            return;
+        }
+        if (this.loseCondition(this)) {
+            this.showGrid = false;
+            this.turnDiv.innerHTML == '';
+            this.statsDiv.innerHTML == '';
+            alert(`The players have won ${this.name}`);
+            return;
+        }
         if (this.playersTurn) {
             for (let player of this.players) {
                 player.enable();
@@ -131,7 +150,9 @@ class Level {
     }
 
     show() {
-        this.grid.draw();
+        if (this.showGrid) {
+            this.grid.draw();
+        }
     }
 }
 
