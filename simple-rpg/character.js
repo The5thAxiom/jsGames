@@ -141,7 +141,7 @@ class Character extends GridObject{
             this.x * this.grid.cellSize + (this.width * this.grid.cellSize) / 2, // center horizontally
             (this.y + this.height - 1) * this.grid.cellSize + (this.height + this.grid.cellSize), // below the icon
             {
-                font: '10px sans- serif'
+                font: '15px Averia Serif Libre'
             }
         );
 
