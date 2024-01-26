@@ -42,31 +42,46 @@ class Character extends GridObject{
     }
 
     updateStatsDiv() {
-        super.updateStatsDiv();
-        this.statsDiv.innerHTML += `
-        Speed: ${this.remainingMovement}/${this.speed} blocks <br />
-        HP: ${this.currentHP}/${this.maxHP} <br />
-        ${!!this.maxArmor ? `Armor: ${this.currentArmor}/${this.maxArmor}` : ''} <br />`
-        
+        this.statsDiv.innerHTML = '';
+        let textToAdd = '';
+        textToAdd += `
+            <div class='image-name'>
+                <img src="${this.imageUrl}" />
+                <div>${this.name}</div>
+            </div>
+            <div class="stats">
+                <div>Speed: ${this.remainingMovement}/${this.speed} blocks</div>
+                <div>${!!this.maxArmor ? `Armor: ${this.currentArmor}/${this.maxArmor} <progress class='armor-bar' value="${this.currentArmor}" max="${this.maxArmor}"></progress>` : ''}</div>
+                <div>HP: ${this.currentHP}/${this.maxHP} <progress class='hp-bar' value="${this.currentHP}" max="${this.maxHP}"></progress></div>
+            </div>
+        `;
+        this.statsDiv.innerHTML += textToAdd;
         // show action and movement options only if enabled
         if (this.enabled) {
-            this.statsDiv.innerHTML += `
-            <button id="move">Move</button> <br />
-            Actions: ${this.remainingActions}/${this.maxActions}<br />
-            <ul>
+            let textToAdd = `<div class="actions">
+            <span
+                class='button ${this.remainingMovement === 0 ? 'disabled' : ''}'
+                id="move"
+                title="${this.speed} blocks"
+            >Move</span> <br />
             `;
             for (let i in this.actions) {
                 const action = this.actions[i];
-                this.statsDiv.innerHTML += `<li><button id="action-${i}">${action.name}</button>: ${action.description}</li>`
+                textToAdd += `<span
+                    title="${action.description}"
+                    class='button ${this.remainingActions === 0 ? 'disabled' : ''}'
+                    id="action-${i}"
+                >${action.name}</span>`
             }
-            this.statsDiv.innerHTML += '</u>';
+            textToAdd += "</div>";
+            this.statsDiv.innerHTML += textToAdd;
+            
             id('move').addEventListener('click', e => this.moveToSelectedCells(e));
             for (let i in this.actions) {
                 const action = this.actions[i];
                 id(`action-${i}`).addEventListener('click', () => this.performAction(i));
             }
         }
-
         this.level.updateTurnDiv();
     }
 
@@ -110,6 +125,7 @@ class Character extends GridObject{
         this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
         this.grid.remove(this);
         this.grid.place(this, x, y);
+        this.updateStatsDiv();
     }
 
     unSelect() {

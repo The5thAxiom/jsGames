@@ -19,32 +19,27 @@ canvas {
     user-select: none;
 }
 
-#stats-div {
-    position: fixed;
-    right: 0;
-    top: 0;
-    margin: 2em;
+#controls > * {
+    background-color: lightblue;
+    padding-inline: 1em;
+    padding-bottom: 1em;
+    border-radius: 1em;
+
+    --turn-div-width: 15em;
+}
+
+#controls > *:empty {
+    display: none;
 }
 
 #turn-div {
     position: fixed;
     left: 0;
     top: 0;
-    margin: 2em;
-    max-height: calc(100vh - 6em);
+    margin: 1em 0 1em 1em;
+    max-height: calc(100vh - 3em);
+    width: var(--turn-div-width);
     overflow-y: scroll;
-}
-
-#controls > * {
-    background-color: lightblue;
-    padding-inline: 2em;
-    padding-bottom: 2em;
-    border-radius: 1em;
-    max-width: 20em;
-}
-
-#controls > *:empty {
-    display: none;
 }
 
 .character {
@@ -60,10 +55,66 @@ canvas {
 
 .character > img {
     display: block;
-    height: 4em;
+    height: 3em;
     aspect-ratio: 1/1;
 }
 
 .hp-bar {
     accent-color: green;
+}
+
+#stats-div {
+    position: fixed;
+    left: calc(var(--turn-div-width) + 3em);
+    bottom: 0;
+    margin: 1em;
+    padding: 1em;
+    width: calc(100vw - var(--turn-div-width) - 3em - 4em);
+
+    display: flex;
+    column-gap: 1em;
+}
+
+#stats-div img {
+    display: block;
+    height: 4em;
+    aspect-ratio: 1/1;
+}
+
+#stats-div > .image-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#stats-div > .stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    /* align-items: center; */
+}
+
+#stats-div > .actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items:stretch;
+    column-gap: .5em;
+}
+
+#stats-div span.button {
+    border: 2px black outset;
+    padding: 0.25em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#stats-div span.button:active {
+    border: 2px black inset;
+}
+
+#stats-div span.button.disabled {
+    border: 2px black groove;
+    cursor:not-allowed
 }
