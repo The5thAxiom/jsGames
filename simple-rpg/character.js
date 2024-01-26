@@ -69,9 +69,9 @@ class Character extends GridObject{
                 const action = this.actions[i];
                 textToAdd += `<span
                     title="${action.description}"
-                    class='button ${this.remainingActions === 0 ? 'disabled' : ''}'
+                    class='button ${(action.maxUses && action.remainingUses === 0) || this.remainingActions === 0 ? 'disabled' : ''}'
                     id="action-${i}"
-                >${action.name}</span>`
+                >${action.name}${!!action.maxUses ? `\n${action.remainingUses}/${action.maxUses}`: ''}</span>`
             }
             textToAdd += "</div>";
             this.statsDiv.innerHTML += textToAdd;
@@ -87,7 +87,10 @@ class Character extends GridObject{
 
     damage(type, value) {
         this.currentHP -= value;
-        if (this.currentHP <= 0) this.grid.remove(this)
+        if (this.currentHP <= 0) {
+            this.grid.remove(this);
+            console.log(`${this.name} died`);
+        }
     }
     
     heal(type, value) {
@@ -100,17 +103,47 @@ class Character extends GridObject{
 
     async performAction(i) {
         const action = this.actions[i];
+        if (action.maxUses && action.remainingUses === 0) return;
 
-        const { x, y, canceled } = await this.grid.getBox(1, 1, (x, y, w, h) => {
-            return gridDistance(this.x, this.y, x, y) <= action.range && this.grid.occupiedBy[y][x] instanceof Character;
-        })
-        if (canceled) return;
+        if (action.type !== 'rangedAOE') {
+            const { x, y, canceled } = await this.grid.getBox(action.targetSize, action.targetSize, (x, y, w, h) => {
+                const target = this.grid.occupiedBy[y][x];
+                return gridDistance(this.x, this.y, x, y) <= action.range && action.isValidTarget(this, target)
+            })
+            if (canceled) return;
         
-        const target = this.grid.occupiedBy[y][x];
-        console.log(`${this.name} used ${action.name} on ${target.name}`);
+            const target = this.grid.occupiedBy[y][x];
+            console.log(`${this.name} used ${action.name} on ${target.name}`);
 
-        action.effect(target);
+            action.effect(target);
+        } else {
+            const { x, y, canceled } = await this.grid.getBox(action.targetSize, action.targetSize, (x, y, w, h) => {
+                let valid = gridDistance(this.x, this.y, x, y) <= action.range ;
+                for (let yi = y; yi < y + action.targetSize; yi++) {
+                    for (let xi = x; xi < x + action.targetSize; xi++) {
+                        const target = this.grid.occupiedBy[yi][xi];
+                        if (target) {
+                            valid &&= action.isValidTarget(this, target);
+                        }
+                    }
+                }
+                return valid;
+            })
+            if (canceled) return;
+        
+            for (let yi = y; yi < y + action.targetSize; yi++) {
+                for (let xi = x; xi < x + action.targetSize; xi++) {
+                    const target = this.grid.occupiedBy[yi][xi];
+                    if (target && target instanceof Character) {
+                        if (target instanceof Character) action.effect(target);
+                    }
+                }
+            }
 
+        }
+        if (action.maxUses) {
+            action.remainingUses--;
+        }
         this.remainingActions--;
         this.updateStatsDiv();
     }
@@ -123,6 +156,7 @@ class Character extends GridObject{
         if (canceled) return;
         // console.log({x, y})
         this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
+        console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
         this.grid.remove(this);
         this.grid.place(this, x, y);
         this.updateStatsDiv();

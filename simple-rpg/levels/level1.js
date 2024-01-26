@@ -62,7 +62,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Slashes a sword at the target to deal 3 points of slashing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('slashing', 3)
+                    effect: target => target.damage('slashing', 3),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -77,7 +78,16 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Shoots a bolt of arcane energy at the target upto 4 blocks away to do 2 points of magical damage',
                     type: 'rangedSingleTarget',
                     range: 4,
-                    effect: target => target.damage('magical', 2)
+                    effect: target => target.damage('magical', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                }),
+                new Action('Arcane Blast', {
+                    description: 'Shoots a blast of arcane energy at a 2x2 area upto 5 blocks away to do 4 points of magical damage',
+                    type: 'rangedAOE',
+                    range: 5,
+                    targetSize: 2,
+                    maxUses: 1,
+                    effect: target => target.damage('magical', 4),
                 })
             ]
         }),
@@ -92,7 +102,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Shoots an arrow at the target upto 3 blocks away to do 1 piercing damage',
                     type: 'rangedSingleTarget',
                     range: 3,
-                    effect: target => target.damage('peircing', 1)
+                    effect: target => target.damage('peircing', 1),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 }), new Action('Prayer', {
                     description: 'Sings a soothing prayer for one target upto 4 blocks away, healing them by 2 points of HP',
                     type: 'rangedSingleTarget',
@@ -114,7 +125,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Bites the target to do 2 points fo piercing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2)
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -129,7 +141,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Bites the target to do 2 points fo piercing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2)
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -144,7 +157,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Bites the target to do 2 points fo piercing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2)
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -159,7 +173,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Bites the target to do 2 points fo piercing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2)
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -174,7 +189,8 @@ function getLevel1(canvas, controlsDiv) {
                     description: 'Bites the target to do 2 points fo piercing damage',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2)
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ]
         }),
@@ -192,7 +208,8 @@ function getLevel1(canvas, controlsDiv) {
         //             effect: target => {
         //                 target.damage('piercing', 5);
         //                 if (target.currentArmor && target.currentArmor > 0) target.currentArmor = Math.max(0, target.currentArmor - 3);
-        //             }
+        //             },
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ]
         // }),

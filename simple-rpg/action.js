@@ -11,6 +11,10 @@ class Action {
         this.effect = options.effect;
         this.maxUses = options.maxUses;
         this.currentUses = options.currentUses || options.maxUses;
+        this.isValidTarget = options.isValidTarget ?? ((character, target) => true);
+        this.targetSize = options.targetSize ?? 1;
+        this.maxUses = options.maxUses;
+        this.remainingUses = this.maxUses;
     }
 }
 
