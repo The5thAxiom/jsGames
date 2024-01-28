@@ -86,8 +86,8 @@ class Character extends GridObject{
     }
 
     damage(type, value) {
-        this.currentHP -= value;
-        if (this.currentHP <= 0) {
+        this.currentHP = Math.max(0, this.currentHP - value);
+        if (this.currentHP == 0) {
             this.grid.remove(this);
             console.log(`${this.name} died`);
         }

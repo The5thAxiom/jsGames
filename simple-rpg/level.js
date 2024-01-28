@@ -115,15 +115,15 @@ class Level {
     newTurn() {
         if (this.winCondition(this)) {
             this.showGrid = false;
-            this.turnDiv.innerHTML == '';
-            this.statsDiv.innerHTML == '';
+            this.turnDiv.innerHTML = '';
+            this.statsDiv.innerHTML = '';
             alert(`The players have won ${this.name}`);
             return;
         }
         if (this.loseCondition(this)) {
             this.showGrid = false;
-            this.turnDiv.innerHTML == '';
-            this.statsDiv.innerHTML == '';
+            this.turnDiv.innerHTML = '';
+            this.statsDiv.innerHTML = '';
             alert(`The players have won ${this.name}`);
             return;
         }
@@ -132,18 +132,21 @@ class Level {
                 player.newTurn();
             }
         } else {
-            for (let enemy of this.enemies) {
-            for (let player of this.players) {
-                player.enable();
-            }
-                enemy.newTurn();
-                enemy.takeTurn();
             for (let player of this.players) {
                 player.disable();
             }
+            for (let enemy of this.enemies) {
+                if (enemy.currentHP > 0) {
+                    enemy.newTurn();
+                    enemy.takeTurn();
+                }
+            }
+            for (let player of this.players) {
+                player.enable();
             }
             this.playersTurn = true;
             this.roundCount++;
+            this.newTurn();
         }
         this.updateTurnDiv();
     }

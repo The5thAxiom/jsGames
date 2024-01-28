@@ -66,7 +66,7 @@ function getLevel1(canvas, controlsDiv) {
             [true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, true, true],// 12
             [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true] // 13
         ],
-        winCondition: level => {return level.enemies.every(e => e.currentHP === 0)},
+        winCondition: level => { console.log(level.enemies.map(e => e.currentHP)); return level.enemies.every(e => e.currentHP === 0)},
         loseCondition: level => {return level.players.every(p => p.currentHP === 0)}
     });
 
