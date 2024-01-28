@@ -1,4 +1,4 @@
-import {sizeToBlocks } from "./utils.js";
+import {sizeToBlocks } from "../utils.js";
 
 class GridObject {
     constructor(name, level, options) {

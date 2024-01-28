@@ -1,4 +1,4 @@
-import GridObject from "./gridObject.js";
+import GridObject from "./gridObjects/gridObject.js";
 
 class Grid {
     constructor(canvas, {height, width, cellSize, frameRate, walls}, {lineColor, fillColor, mapUrl}) {
@@ -303,6 +303,11 @@ class Grid {
                 this.occupiedBy[yi][xi] = null;
             }
         }
+    }
+
+    moveTo(item, x, y) {
+        this.remove(item);
+        this.place(item, x, y);
     }
 
     setCellFillColor(x, y, color) {

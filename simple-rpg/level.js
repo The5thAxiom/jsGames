@@ -43,8 +43,7 @@ class Level {
         this.turnDiv.innerHTML = `
         <h1 id="game-title"><img src="assets/icon.png" /> Simple-RPG</h1>
         <hr />
-        <h2>Round ${this.roundCount}: ${this.playersTurn ? "Players'" : "Enemies'"} turn <br />
-        </h2>
+        <h2>Round ${this.roundCount}</h2>
         <button id="end-turn">End Turn</button>
         `;
         let textToAdd = '';
@@ -89,8 +88,7 @@ class Level {
         this.turnDiv.innerHTML += textToAdd;
 
         id('end-turn').addEventListener('click', () => {
-            this.playersTurn = !this.playersTurn;
-            if (this.playersTurn) this.roundCount++;
+            this.playersTurn = false;
             this.newTurn();
         })
     }
@@ -103,11 +101,11 @@ class Level {
     }
 
     setPlayers(players) {
-        this.players = players
+        this.players = players;
     }
 
     setEnemies(enemies) {
-        this.enemies = enemies
+        this.enemies = enemies;
     }
 
     setEnvironmentObjects(environmentObjects) {
@@ -131,20 +129,21 @@ class Level {
         }
         if (this.playersTurn) {
             for (let player of this.players) {
-                player.enable();
                 player.newTurn();
-            }
-            for (let enemy of this.enemies) {
-                enemy.disable();
             }
         } else {
             for (let enemy of this.enemies) {
-                enemy.enable();
-                enemy.newTurn();
+            for (let player of this.players) {
+                player.enable();
             }
+                enemy.newTurn();
+                enemy.takeTurn();
             for (let player of this.players) {
                 player.disable();
             }
+            }
+            this.playersTurn = true;
+            this.roundCount++;
         }
         this.updateTurnDiv();
     }

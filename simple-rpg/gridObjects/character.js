@@ -1,5 +1,5 @@
 import GridObject from "./gridObject.js";
-import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox } from "./utils.js";
+import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox } from "../utils.js";
 
 class Character extends GridObject{
     constructor(name, level, options) {
@@ -157,8 +157,7 @@ class Character extends GridObject{
         // console.log({x, y})
         this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
         console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
-        this.grid.remove(this);
-        this.grid.place(this, x, y);
+        this.grid.moveTo(this, x, y);
         this.updateStatsDiv();
     }
 

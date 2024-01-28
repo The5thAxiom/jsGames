@@ -1,7 +1,48 @@
-import Character from "../character.js";
-import GridObject from "../gridObject.js";
 import Level from "../level.js";
+import Character from "../gridObjects/character.js";
+import GridObject from "../gridObjects/gridObject.js";
+import Enemy from "../gridObjects/enemy.js";
+import Player from "../gridObjects/player.js";
 import Action from "../action.js"
+import { gridDistance } from "../utils.js";
+
+function biteNearestPlayer(enemy) {
+    const grid = enemy.grid;
+    const originalPos = { x: enemy.x, y: enemy.y };
+    let target = null;
+    let targetPos = {x: -1, y: -1}
+    for (let yi = Math.max(0, enemy.y - enemy.speed); yi <= Math.min(grid.height, enemy.y + enemy.speed); yi++) {
+        if (target) break;
+        for (let xi = Math.max(0, enemy.x - enemy.speed); xi <= Math.min(grid.width, enemy.x + enemy.speed); xi++) {// for each cell in the 
+            if (target) break;
+            // console.log(`${enemy.name} (speed ${enemy.speed}) searching at: ${xi}, ${yi}`);
+            if (!grid.occupiedBy[yi][xi] || grid.occupiedBy[yi][xi] === enemy) {
+                for (let i = Math.max(0, yi - 1); i <= Math.min(grid.height, yi + 1); i++) {
+                    if (target) break;
+                    for (let j = Math.max(0, xi - 1); j <= Math.min(grid.width, xi + 1); j++) {
+                        if (target) break;
+                        const tempTarget = grid.occupiedBy[i][j];
+                        // console.log(`${this.name} checking if ${tempTarget ? tempTarget.name : 'null'} at ${j}, ${i}`);
+                        if (tempTarget && tempTarget instanceof Player && tempTarget.currentHP > 0) {
+                            target = tempTarget;
+                            targetPos.x = xi;
+                            targetPos.y = yi;
+                            // console.log('P.S. it was')
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (target) {
+        grid.moveTo(enemy, targetPos.x, targetPos.y);
+        enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
+        enemy.remainingActions--;
+        enemy.actions[0].effect(target);
+        console.log(`${enemy.name} used ${enemy.actions[0].name} on ${target.name}`);
+        enemy.updateStatsDiv();
+    }
+}
 
 function getLevel1(canvas, controlsDiv) {
     const level = new Level('Level 1', canvas, controlsDiv, {
@@ -25,7 +66,7 @@ function getLevel1(canvas, controlsDiv) {
             [true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, true, true],// 12
             [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true] // 13
         ],
-        winCondition: level => { console.log(level.enemies.map(e => e.currentHP)); return level.enemies.every(e => e.currentHP === 0)},
+        winCondition: level => {return level.enemies.every(e => e.currentHP === 0)},
         loseCondition: level => {return level.players.every(p => p.currentHP === 0)}
     });
 
@@ -52,7 +93,7 @@ function getLevel1(canvas, controlsDiv) {
         })
     ]);
     level.setPlayers([
-        new Character('Knight', level, {
+        new Player('Knight', level, {
             imageUrl: "./assets/knight.png",
             speed: 2,
             size: 'medium',
@@ -69,7 +110,7 @@ function getLevel1(canvas, controlsDiv) {
                 })
             ]
         }),
-        new Character('Mage', level, {
+        new Player('Mage', level, {
             imageUrl: "./assets/mage.png",
             speed: 3,
             size: 'medium',
@@ -93,7 +134,7 @@ function getLevel1(canvas, controlsDiv) {
                 })
             ]
         }),
-        new Character('Cleric', level, {
+        new Player('Cleric', level, {
             imageUrl: "./assets/cleric.png",
             speed: 4,
             size: 'medium',
@@ -116,7 +157,7 @@ function getLevel1(canvas, controlsDiv) {
         }),
     ]);
     level.setEnemies([
-        new Character('Bug A', level, {
+        new Enemy('Bug A', level, {
             imageUrl: "./assets/bug.png",
             speed: 3,
             size: 'small',
@@ -130,73 +171,78 @@ function getLevel1(canvas, controlsDiv) {
                     effect: target => target.damage('piercing', 2),
                     isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
-            ]
+            ],
+            turnFunction: biteNearestPlayer
         }),
-        // new Character('Bug B', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 7, y: 3 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ]
-        // }),
-        // new Character('Bug C', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 8, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ]
-        // }),
-        // new Character('Bug D', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 9, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ]
-        // }),
-        // new Character('Bug E', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 10, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ]
-        // }),
-        // new Character('Armour Devourer', level, {
+        new Enemy('Bug B', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 7, y: 3 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                })
+            ],
+            turnFunction: biteNearestPlayer
+        }),
+        new Enemy('Bug C', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 8, y: 4 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                })
+            ],
+            turnFunction: biteNearestPlayer
+        }),
+        new Enemy('Bug D', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 9, y: 4 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                })
+            ],
+            turnFunction: biteNearestPlayer
+        }),
+        new Enemy('Bug E', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 10, y: 4 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                })
+            ],
+            turnFunction: biteNearestPlayer
+        }),
+        // new Enemy('Armour Devourer', level, {
         //     imageUrl: "./assets/armour-devourer.png",
         //     speed: 4,
         //     size: 'medium',
