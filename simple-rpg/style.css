@@ -5,9 +5,18 @@ body {
     font-family: 'Averia Serif Libre', serif;
 }
 
+#title-round {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    background-color: lightblue;
+}
+
 #game-title {
     display: flex;
     align-items: center;
+    margin: 0;
+    padding-block: 0.5em;
 }
 
 #game-title > img {

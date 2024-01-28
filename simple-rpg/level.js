@@ -41,24 +41,32 @@ class Level {
 
     updateTurnDiv() {
         this.turnDiv.innerHTML = `
-        <h1 id="game-title"><img src="assets/icon.png" /> Simple-RPG</h1>
-        <hr />
-        <h2>Round ${this.roundCount}</h2>
-        <button id="end-turn">End Turn</button>
+        <div id="title-round">
+            <h1 id="game-title"><img src="assets/icon.png" /> Simple-RPG</h1>
+            <hr />
+            <h2>Round ${this.roundCount}</h2>
+            <button id="end-turn">End Turn</button>
+            <hr />
+        </div>
         `;
         let textToAdd = '';
         textToAdd += `
-            <hr />
             <h3>Players</h3>
             <div class="characters">
                 ${this.players.reduce((val, player) => val + `
                     <div class="character">
                         <img src="${player.imageUrl}" />
-                        <div class="info" >
+                        <div class="info">
                             <div>${player.name}</div>
                             ${player.currentHP > 0 ? `
-                                ${player.maxArmor ? `<div>Armor: <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress></div>` : ''}
-                                <div>HP: <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></div></progress>
+                                ${player.maxArmor ? `<div>
+                                    Armor: ${player.currentArmor}/${player.maxArmor}
+                                    <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress>
+                                </div>` : ''}
+                                <div>
+                                    HP: ${player.currentHP}/${player.maxHP}
+                                    <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></progress>
+                                </div>
                             ` : 'Dead'}
                         </div>
                     </div>
@@ -73,11 +81,17 @@ class Level {
                 ${this.enemies.reduce((val, player) => val + `
                     <div class="character">
                         <img src="${player.imageUrl}" />
-                        <div class="info" >
+                        <div class="info">
                             <div>${player.name}</div>
                             ${player.currentHP > 0 ? `
-                                ${player.maxArmor ? `<div>Armor: <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress></div>` : ''}
-                                <div>HP: <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></div></progress>
+                                ${player.maxArmor ? `<div>
+                                    Armor: ${player.currentArmor}/${player.maxArmor}
+                                    <progress class='armor-bar' value=${player.currentArmor} max=${player.maxArmor}></progress>
+                                </div>` : ''}
+                                <div>
+                                    HP: ${player.currentHP}/${player.maxHP}
+                                    <progress class='hp-bar' value=${player.currentHP} max=${player.maxHP}></progress>
+                                </div>
                             ` : 'Dead'}
                         </div>
                     </div>
@@ -114,17 +128,17 @@ class Level {
 
     newTurn() {
         if (this.winCondition(this)) {
-            this.showGrid = false;
+            // this.showGrid = false;
             this.turnDiv.innerHTML = '';
             this.statsDiv.innerHTML = '';
             alert(`The players have won ${this.name}`);
             return;
         }
         if (this.loseCondition(this)) {
-            this.showGrid = false;
+            // this.showGrid = false;
             this.turnDiv.innerHTML = '';
             this.statsDiv.innerHTML = '';
-            alert(`The players have won ${this.name}`);
+            alert(`The enemies have won ${this.name}`);
             return;
         }
         if (this.playersTurn) {
