@@ -86,6 +86,15 @@ class Character extends GridObject{
     }
 
     damage(type, value) {
+        if (this.maxArmor && this.currentArmor > 0) {
+            if (this.currentArmor > value) {
+                this.currentArmor = Math.max(0, this.currentArmor - value);
+                return;
+            } else {
+                value -= this.currentArmor;
+                this.currentArmor = 0;
+            }
+        }
         this.currentHP = Math.max(0, this.currentHP - value);
         if (this.currentHP == 0) {
             this.grid.remove(this);
