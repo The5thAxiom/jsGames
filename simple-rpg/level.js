@@ -144,6 +144,7 @@ class Level {
         } else {
             for (let player of this.players) {
                 player.disable();
+                player.unSelect();
             }
             for (let enemy of this.enemies) {
                 if (enemy.currentHP > 0) {

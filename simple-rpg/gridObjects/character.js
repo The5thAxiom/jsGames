@@ -82,13 +82,13 @@ class Character extends GridObject{
             this.statsDiv.innerHTML += textToAdd;
             
             id('move').addEventListener('click', e => this.moveToSelectedCells(e));
-            id('move').addEventListener('mouseenter', e => { console.log('entered move'); this.potentialAction = 'move'; });
-            id('move').addEventListener('mouseleave', e => { console.log('left move'); this.potentialAction = null; });
+            id('move').addEventListener('mouseenter', e => { this.potentialAction = 'move'; });
+            id('move').addEventListener('mouseleave', e => { this.potentialAction = null; });
             for (let i in this.actions) {
                 const action = this.actions[i];
                 id(`action-${i}`).addEventListener('click', () => this.performAction(i));
-                id(`action-${i}`).addEventListener('mouseenter', () => { console.log('entered action'); this.potentialAction = this.actions[i]; });
-                id(`action-${i}`).addEventListener('mouseleave', () => {  console.log('left action'); this.potentialAction = null; console.log(this.potentialAction)});
+                id(`action-${i}`).addEventListener('mouseenter', () => { this.potentialAction = this.actions[i]; });
+                id(`action-${i}`).addEventListener('mouseleave', () => { this.potentialAction = null; });
             }
         }
         if (this.currentAction) {
@@ -235,7 +235,7 @@ class Character extends GridObject{
                 font: '15px Averia Serif Libre'
             }
         );
-        console.log({t: document.timeline.currentTime, ca: this.currentAction !== null, pa: this.potentialAction !== null });
+        // console.log({t: document.timeline.currentTime, ca: this.currentAction !== null, pa: this.potentialAction !== null });
         if (this.selected) {
             this.grid.resetCellColors();
             if (this.currentAction === 'move' || this.potentialAction === 'move') {
