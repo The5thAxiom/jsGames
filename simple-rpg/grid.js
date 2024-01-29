@@ -158,13 +158,13 @@ class Grid {
 
     resetCellColors() {
         this.cellColors = [];
-            for (let i = 0; i < this.height; i++) {
-                let temp = [];
-                for (let j = 0; j < this.width; j++) {
-                    temp.push(null);
-                }
-                this.cellColors.push(temp);
+        for (let i = 0; i < this.height; i++) {
+            let temp = [];
+            for (let j = 0; j < this.width; j++) {
+                temp.push(null);
             }
+            this.cellColors.push(temp);
+        }
     }
 
     getCellUnderMouse(e) {
@@ -221,6 +221,7 @@ class Grid {
             const keepChecking = setInterval(() => {
                 // console.log(`checking: ${this.selectBox}`);
                 if (isCanceled()) {
+                    this.mouseFunction = 'free';
                     this.selectBoxDims = null;
                     this.selectBox = null;
                     this.selectBoxIsValid = null;
@@ -391,7 +392,6 @@ class Grid {
                 }
             }
         }
-        // requestAnimationFrame(this.draw.bind(this))
     }
 }
 

@@ -25,8 +25,6 @@ class Level {
             mapUrl: this.mapUrl
         });
 
-        this.showGrid = true;
-
         this.controlsDiv = controlsDiv;
         this.turnDiv = document.createElement('div');
         this.turnDiv.id = 'turn-div';
@@ -128,14 +126,12 @@ class Level {
 
     newTurn() {
         if (this.winCondition(this)) {
-            // this.showGrid = false;
             this.turnDiv.innerHTML = '';
             this.statsDiv.innerHTML = '';
             alert(`The players have won ${this.name}`);
             return;
         }
         if (this.loseCondition(this)) {
-            // this.showGrid = false;
             this.turnDiv.innerHTML = '';
             this.statsDiv.innerHTML = '';
             alert(`The enemies have won ${this.name}`);
@@ -166,9 +162,7 @@ class Level {
     }
 
     show() {
-        if (this.showGrid) {
-            this.grid.draw();
-        }
+        this.grid.draw();
     }
 }
 

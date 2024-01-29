@@ -19,6 +19,7 @@ class Character extends GridObject{
         this.newTurn();
 
         this.currentAction = null;
+        this.potentialAction = null;
 
         this.enabled = false;
     }
@@ -81,9 +82,13 @@ class Character extends GridObject{
             this.statsDiv.innerHTML += textToAdd;
             
             id('move').addEventListener('click', e => this.moveToSelectedCells(e));
+            id('move').addEventListener('mouseenter', e => { console.log('entered move'); this.potentialAction = 'move'; });
+            id('move').addEventListener('mouseleave', e => { console.log('left move'); this.potentialAction = null; });
             for (let i in this.actions) {
                 const action = this.actions[i];
                 id(`action-${i}`).addEventListener('click', () => this.performAction(i));
+                id(`action-${i}`).addEventListener('mouseenter', () => { console.log('entered action'); this.potentialAction = this.actions[i]; });
+                id(`action-${i}`).addEventListener('mouseleave', () => {  console.log('left action'); this.potentialAction = null; console.log(this.potentialAction)});
             }
         }
         if (this.currentAction) {
@@ -184,7 +189,9 @@ class Character extends GridObject{
             }
             this.remainingActions--;
         }
+        this.grid.resetCellColors();
         this.currentAction = null;
+        this.potentialAction = null;
         this.updateStatsDiv();
     }
 
@@ -204,12 +211,16 @@ class Character extends GridObject{
             console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
             this.grid.moveTo(this, x, y);
         }
+        this.grid.resetCellColors();
         this.currentAction = null;
+        this.potentialAction = null;
         this.updateStatsDiv();
     }
 
     unSelect() {
         super.unSelect();
+        this.currentAction = null;
+        this.potentialAction = null;
     }
 
     draw() {
@@ -224,27 +235,31 @@ class Character extends GridObject{
                 font: '15px Averia Serif Libre'
             }
         );
-
+        console.log({t: document.timeline.currentTime, ca: this.currentAction !== null, pa: this.potentialAction !== null });
         if (this.selected) {
-            this.grid.resetCellColors()
-            for (let yi = 0; yi < this.grid.height; yi++) {
-                for (let xi = 0; xi < this.grid.width; xi++) {
-                    if (yi == this.y && xi == this.x) continue;
-                    if ((
+            this.grid.resetCellColors();
+            if (this.currentAction === 'move' || this.potentialAction === 'move') {
+                for (let yi = 0; yi < this.grid.height; yi++) {
+                    for (let xi = 0; xi < this.grid.width; xi++) {
+                        if (yi == this.y && xi == this.x) continue;
+                        if ((
                             gridDistance(xi, yi, this.x, this.y) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x + this.width - 1, this.y + this.height - 1) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x, this.y + this.height - 1) <= this.remainingMovement
                             || gridDistance(xi, yi, this.x + this.width - 1, this.y) <= this.remainingMovement
-                        )&& this.grid.occupiedBy[yi][xi] === null
-                    ) {
-                        // for (let i = yi; i < yi + this.height; i++) {
-                        //     for (let j = xi; j < xi + this.width; j++) {
-                                // if (!this.grid.occupiedBy[i][j]) {
-                                    // this.grid.setCellFillColor(j, i, 'green');
-                                // }
-                        //     }
-                        // }
-                        this.grid.setCellFillColor(xi, yi, 'green');
+                        ) && this.grid.occupiedBy[yi][xi] === null
+                        ) {
+                            this.grid.setCellFillColor(xi, yi, 'green');
+                        }
+                    }
+                }
+            } else if (this.currentAction instanceof Action || this.potentialAction instanceof Action) {
+                const action = this.currentAction ?? this.potentialAction;
+                for (let yi = 0; yi < this.grid.height; yi++) {
+                    for (let xi = 0; xi < this.grid.width; xi++) {
+                        if (gridDistance(xi, yi, this.x, this.y) <= action.range && this.grid.occupiedBy[yi][xi] !== this.grid.wall) {
+                            this.grid.setCellFillColor(xi, yi, 'red');
+                        }
                     }
                 }
             }
