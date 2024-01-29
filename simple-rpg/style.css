@@ -121,7 +121,7 @@ canvas {
     column-gap: .5em;
 }
 
-#stats-div span.button {
+.button {
     border: 2px black outset;
     padding: 0.25em;
     display: flex;
@@ -131,11 +131,11 @@ canvas {
     background-color: lightgreen;
 }
 
-#stats-div span.button:active {
+.button:active {
     border: 2px black inset;
 }
 
-#stats-div span.button.disabled {
+.button.disabled {
     border: 2px black groove;
     cursor:not-allowed;
     background-color: lightcoral;

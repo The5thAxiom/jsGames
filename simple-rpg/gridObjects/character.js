@@ -167,7 +167,6 @@ class Character extends GridObject{
                 return !this.currentAction || this.currentAction !== action;
             })
             actionCanceled = canceled;
-            console.log(actionCanceled)
             if (!canceled) {
                 for (let yi = y; yi < y + action.targetSize; yi++) {
                     for (let xi = x; xi < x + action.targetSize; xi++) {
@@ -179,7 +178,6 @@ class Character extends GridObject{
                 }
             }
         }
-        console.log(actionCanceled)
         if (!actionCanceled) {
             if (action.maxUses) {
                 action.remainingUses--;
