@@ -1,4 +1,5 @@
 import GridObject from "./gridObject.js";
+import Action from '../action.js';
 import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox } from "../utils.js";
 
 class Character extends GridObject{
@@ -16,6 +17,8 @@ class Character extends GridObject{
         this.turnStartHandlers = [];
         this.turnEndHandlers = [];
         this.newTurn();
+
+        this.currentAction = null;
 
         this.enabled = false;
     }
@@ -60,16 +63,17 @@ class Character extends GridObject{
         if (this.enabled) {
             let textToAdd = `<div class="actions">
             <span
-                class='button ${this.remainingMovement === 0 ? 'disabled' : ''}'
+                class='button ${this.remainingMovement === 0 || (this.currentAction && this.currentAction !== 'move') ? 'disabled' : ''}'
                 id="move"
                 title="${this.speed} blocks"
             >Move</span> <br />
             `;
             for (let i in this.actions) {
                 const action = this.actions[i];
+                // console.log({action, ca: this.currentAction});
                 textToAdd += `<span
                     title="${action.description}"
-                    class='button ${(action.maxUses && action.remainingUses === 0) || this.remainingActions === 0 ? 'disabled' : ''}'
+                    class='button ${(action.maxUses && action.remainingUses === 0) || this.remainingActions === 0 || (this.currentAction && this.currentAction !== action) ? 'disabled' : ''}'
                     id="action-${i}"
                 >${action.name}${!!action.maxUses ? `\n${action.remainingUses}/${action.maxUses}`: ''}</span>`
             }
@@ -81,6 +85,21 @@ class Character extends GridObject{
                 const action = this.actions[i];
                 id(`action-${i}`).addEventListener('click', () => this.performAction(i));
             }
+        }
+        if (this.currentAction) {
+            textToAdd = `
+                <div id='current-action'>
+                    ${this.currentAction === 'move'
+                        ? `Move upto ${this.speed} blocks`
+                        : this.currentAction.description
+                    }
+                    <span id='cancel-current-action' class='button'>Cancel</span>
+                </div>`;
+            this.statsDiv.innerHTML += textToAdd;
+            id('cancel-current-action').addEventListener('click', () => {
+                this.currentAction = null;
+                this.updateStatsDiv();
+            })
         }
         this.level.updateTurnDiv();
     }
@@ -114,17 +133,24 @@ class Character extends GridObject{
         const action = this.actions[i];
         if (action.maxUses && action.remainingUses === 0) return;
 
+        this.currentAction = action;
+        this.updateStatsDiv();
+
+        let actionCanceled = false;
+
         if (action.type !== 'rangedAOE') {
             const { x, y, canceled } = await this.grid.getBox(action.targetSize, action.targetSize, (x, y, w, h) => {
                 const target = this.grid.occupiedBy[y][x];
                 return gridDistance(this.x, this.y, x, y) <= action.range && action.isValidTarget(this, target)
+            }, () => {
+                return !this.currentAction || this.currentAction !== action;
             })
-            if (canceled) return;
-        
-            const target = this.grid.occupiedBy[y][x];
-            console.log(`${this.name} used ${action.name} on ${target.name}`);
-
-            action.effect(target);
+            actionCanceled = canceled;
+            if (!canceled) {
+                const target = this.grid.occupiedBy[y][x];
+                console.log(`${this.name} used ${action.name} on ${target.name}`);
+                action.effect(target);
+            }
         } else {
             const { x, y, canceled } = await this.grid.getBox(action.targetSize, action.targetSize, (x, y, w, h) => {
                 let valid = gridDistance(this.x, this.y, x, y) <= action.range ;
@@ -137,36 +163,50 @@ class Character extends GridObject{
                     }
                 }
                 return valid;
+            }, () => {
+                return !this.currentAction || this.currentAction !== action;
             })
-            if (canceled) return;
-        
-            for (let yi = y; yi < y + action.targetSize; yi++) {
-                for (let xi = x; xi < x + action.targetSize; xi++) {
-                    const target = this.grid.occupiedBy[yi][xi];
-                    if (target && target instanceof Character) {
-                        if (target instanceof Character) action.effect(target);
+            actionCanceled = canceled;
+            console.log(actionCanceled)
+            if (!canceled) {
+                for (let yi = y; yi < y + action.targetSize; yi++) {
+                    for (let xi = x; xi < x + action.targetSize; xi++) {
+                        const target = this.grid.occupiedBy[yi][xi];
+                        if (target && target instanceof Character) {
+                            if (target instanceof Character) action.effect(target);
+                        }
                     }
                 }
             }
-
         }
-        if (action.maxUses) {
-            action.remainingUses--;
+        console.log(actionCanceled)
+        if (!actionCanceled) {
+            if (action.maxUses) {
+                action.remainingUses--;
+            }
+            this.remainingActions--;
         }
-        this.remainingActions--;
+        this.currentAction = null;
         this.updateStatsDiv();
     }
 
     async moveToSelectedCells(e) {
+        this.currentAction = 'move';
+        this.updateStatsDiv();
+
         const { x, y, w, h, canceled } = await this.grid.getBox(this.width, this.height, (x, y, w, h) => {
             const distance = gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
             return this.grid.canPlace(this, x, y) && distance <= this.remainingMovement;
+        }, () => {
+            return !this.currentAction || this.currentAction !== 'move';
         })
-        if (canceled) return;
-        // console.log({x, y})
-        this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
-        console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
-        this.grid.moveTo(this, x, y);
+        if (!canceled) {
+            // console.log({x, y})
+            this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
+            console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
+            this.grid.moveTo(this, x, y);
+        }
+        this.currentAction = null;
         this.updateStatsDiv();
     }
 

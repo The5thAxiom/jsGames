@@ -109,7 +109,7 @@ class Grid {
             }
         } else if (this.mouseFunction == 'select') {
             this.mouseFunction = 'free';
-            const tempSelectBoxIsValid = !!this.tempSelectBox && this.selectBoxValidate(
+            const tempSelectBoxIsValid = !!this.tempSelectBox && !this.selectBoxIsCanceled() && this.selectBoxIsValid(
                 this.tempSelectBox.x,
                 this.tempSelectBox.y,
                 this.tempSelectBox.w,
@@ -147,7 +147,7 @@ class Grid {
         } else if (this.mouseFunction === 'select') {
             const { x, y, w, h, outOfBounds } = this.getBoxUnderMouse(e, this.selectBoxDims.w, this.selectBoxDims.h);
             // console.log({ x, y, w, h, v: this.selectBoxValidate(x, y, w, h) });
-            if (!outOfBounds && this.selectBoxValidate(x, y, w, h)) {
+            if (!outOfBounds && !this.selectBoxIsCanceled() && this.selectBoxIsValid(x, y, w, h)) {
                 this.tempSelectBox = { x, y, w, h };
             } else {
                 this.tempSelectBox = null;
@@ -210,18 +210,26 @@ class Grid {
         return answer;
     }
 
-    getBox(w, h, validate) {
+    getBox(w, h, isValid, isCanceled) {
         return new Promise((resolve, reject) => {
             this.mouseFunction = 'select';
             this.selectBoxDims = { w, h };
-            this.selectBoxValidate = validate;
+            this.selectBoxIsValid = isValid;
+            this.selectBoxIsCanceled = isCanceled;
             // console.log(validate)
             this.selectBox = null;
             const keepChecking = setInterval(() => {
                 // console.log(`checking: ${this.selectBox}`);
-                if (this.mouseFunction === 'free') {
+                if (isCanceled()) {
+                    this.selectBoxDims = null;
+                    this.selectBox = null;
+                    this.selectBoxIsValid = null;
+                    this.tempSelectBox = null;
+                    resolve({ x: -1, y: -1, h: -1, w: -1, canceled: true });
+                    clearInterval(keepChecking);
+                } else if (this.mouseFunction === 'free') {
                     // console.log('end')
-                    if (this.selectBox) {
+                    if (!isCanceled() && this.selectBox) {
                         this.selectBox.canceled = false;
                         resolve(this.selectBox)
                     } else {
@@ -229,11 +237,11 @@ class Grid {
                     }
                     this.selectBoxDims = null;
                     this.selectBox = null;
-                    this.selectBoxValidate = null;
+                    this.selectBoxIsValid = null;
                     this.tempSelectBox = null;
                     clearInterval(keepChecking);
                 }
-            }, 100);
+            }, 10);
         })
     }
 

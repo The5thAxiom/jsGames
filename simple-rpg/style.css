@@ -49,7 +49,7 @@ canvas {
     margin: 1em 0 1em 1em;
     max-height: calc(100vh - 3em);
     width: var(--turn-div-width);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .character {
@@ -78,11 +78,18 @@ canvas {
     left: calc(var(--turn-div-width) + 3em);
     bottom: 0;
     margin: 1em;
-    padding: 1em;
+    padding: 0;
     width: calc(100vw - var(--turn-div-width) - 3em - 4em);
 
     display: flex;
-    column-gap: 1em;
+    /* column-gap: 1em; */
+    overflow-x: auto;
+}
+
+#stats-div > * {
+    /* padding-block: 1em; */
+    padding: 1em;
+    max-height: 10em;
 }
 
 #stats-div img {
@@ -95,6 +102,9 @@ canvas {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: sticky;
+    left: 0;
+    background-color: inherit;
 }
 
 #stats-div > .stats {
@@ -118,6 +128,7 @@ canvas {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    background-color: lightgreen;
 }
 
 #stats-div span.button:active {
@@ -126,5 +137,7 @@ canvas {
 
 #stats-div span.button.disabled {
     border: 2px black groove;
-    cursor:not-allowed
+    cursor:not-allowed;
+    background-color: lightcoral;
+    text-decoration: line-through;
 }
