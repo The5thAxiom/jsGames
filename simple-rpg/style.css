@@ -1,3 +1,12 @@
+:root {
+    --cursor-pointer: pointer;
+    --cursor-not-allowed: not-allowed;
+    --cursor-move: move;
+    --cursor-target: url(./assets/target.png) 0 0, cell;
+    --cursor-grab: grab;
+    --cursor-grabbing: grabbing;
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -127,7 +136,7 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: url('./assets/armour-devourer.png'), var(--cursor-pointer);
     background-color: lightgreen;
 }
 
@@ -137,7 +146,7 @@ canvas {
 
 .button.disabled {
     border: 2px black groove;
-    cursor:not-allowed;
+    cursor: var(--cursor-not-allowed);
     background-color: lightcoral;
     text-decoration: line-through;
 }

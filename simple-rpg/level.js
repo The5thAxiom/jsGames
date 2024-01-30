@@ -2,7 +2,7 @@ import Grid from "./grid.js";
 import { id } from "./utils.js";
 
 class Level {
-    constructor(name, canvas, controlsDiv, {mapUrl, width, height, cellSize, walls, winCondition, loseCondition}) {
+    constructor(name, canvas, turnDiv, statsDiv, {mapUrl, width, height, cellSize, walls, winCondition, loseCondition}) {
         this.name = name;
         this.canvas = canvas;
         this.height = height;
@@ -25,13 +25,8 @@ class Level {
             mapUrl: this.mapUrl
         });
 
-        this.controlsDiv = controlsDiv;
-        this.turnDiv = document.createElement('div');
-        this.turnDiv.id = 'turn-div';
-        this.statsDiv = document.createElement('div');
-        this.statsDiv.id = 'stats-div';
-        this.controlsDiv.appendChild(this.turnDiv);
-        this.controlsDiv.appendChild(this.statsDiv);
+        this.turnDiv = turnDiv;
+        this.statsDiv = statsDiv;
 
         this.playersTurn = true;
         this.roundCount = 1;
@@ -125,18 +120,6 @@ class Level {
     }
 
     newTurn() {
-        if (this.winCondition(this)) {
-            this.turnDiv.innerHTML = '';
-            this.statsDiv.innerHTML = '';
-            alert(`The players have won ${this.name}`);
-            return;
-        }
-        if (this.loseCondition(this)) {
-            this.turnDiv.innerHTML = '';
-            this.statsDiv.innerHTML = '';
-            alert(`The enemies have won ${this.name}`);
-            return;
-        }
         if (this.playersTurn) {
             for (let player of this.players) {
                 player.newTurn();
@@ -162,8 +145,22 @@ class Level {
         this.updateTurnDiv();
     }
 
+    remove() {
+        this.turnDiv.innerHTML = '';
+        this.statsDiv.innerHTML = '';
+        this.grid.clear();
+    }
+
     show() {
-        this.grid.draw();
+        if (this.winCondition(this)) {
+            return 'won';
+        } else if (this.loseCondition(this)) {
+            return 'lost';
+        } else {
+            // console.log({ round: this.roundCount, turn: this.playersTurn ? 'player' : 'enemy' });
+            this.grid.draw();
+            return null;
+        }
     }
 }
 

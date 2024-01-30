@@ -44,27 +44,27 @@ function biteNearestPlayer(enemy) {
     }
 }
 
-function getLevel1(canvas, turnDiv, statsDiv) {
-    const level = new Level('Level 1', canvas, turnDiv, statsDiv, {
-        mapUrl: './assets/map.png',
+function getLevel2(canvas, turnDiv, statsDiv) {
+    const level = new Level('Level 2', canvas, turnDiv, statsDiv, {
+        mapUrl: './assets/map2.png',
         height: 14,
         width: 18,
         cellSize: 100,
         walls: [
-            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], // 0
-            [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, true, true], //1
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 2
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 3
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 4
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 5
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 6
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 7
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 8
-            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 9
-            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 10
-            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 11
+            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], // 13
             [true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, true, true],// 12
-            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true] // 13
+            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 11
+            [true, true, false, false, false, false, false, true, true, true, true, false, false, false, false, false, true, true],// 10
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 9
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 8
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 7
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 6
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 5
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 4
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 3
+            [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true],// 2
+            [true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, true, true], //1
+            [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], // 0
         ],
         winCondition: level => {return level.enemies.every(e => e.currentHP === 0)},
         loseCondition: level => {return level.players.every(p => p.currentHP === 0)}
@@ -157,94 +157,114 @@ function getLevel1(canvas, turnDiv, statsDiv) {
         }),
     ]);
     level.setEnemies([
-        new Enemy('Bug A', level, {
-            imageUrl: "./assets/bug.png",
-            speed: 3,
-            size: 'small',
-            maxHP: 5,
-            defaultLocation: { x: 10, y: 3 },
+        // new Enemy('Bug A', level, {
+        //     imageUrl: "./assets/bug.png",
+        //     speed: 3,
+        //     size: 'small',
+        //     maxHP: 5,
+        //     defaultLocation: { x: 10, y: 3 },
+        //     actions: [
+        //         new Action('Bite', {
+        //             description: 'Bites the target to do 2 points fo piercing damage',
+        //             type: 'melee',
+        //             range: 1,
+        //             effect: target => target.damage('piercing', 2),
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
+        //         })
+        //     ],
+        //     turnFunction: biteNearestPlayer
+        // }),
+        // new Enemy('Bug B', level, {
+        //     imageUrl: "./assets/bug.png",
+        //     speed: 3,
+        //     size: 'small',
+        //     maxHP: 5,
+        //     defaultLocation: { x: 7, y: 3 },
+        //     actions: [
+        //         new Action('Bite', {
+        //             description: 'Bites the target to do 2 points fo piercing damage',
+        //             type: 'melee',
+        //             range: 1,
+        //             effect: target => target.damage('piercing', 2),
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
+        //         })
+        //     ],
+        //     turnFunction: biteNearestPlayer
+        // }),
+        // new Enemy('Bug C', level, {
+        //     imageUrl: "./assets/bug.png",
+        //     speed: 3,
+        //     size: 'small',
+        //     maxHP: 5,
+        //     defaultLocation: { x: 8, y: 4 },
+        //     actions: [
+        //         new Action('Bite', {
+        //             description: 'Bites the target to do 2 points fo piercing damage',
+        //             type: 'melee',
+        //             range: 1,
+        //             effect: target => target.damage('piercing', 2),
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
+        //         })
+        //     ],
+        //     turnFunction: biteNearestPlayer
+        // }),
+        // new Enemy('Bug D', level, {
+        //     imageUrl: "./assets/bug.png",
+        //     speed: 3,
+        //     size: 'small',
+        //     maxHP: 5,
+        //     defaultLocation: { x: 9, y: 4 },
+        //     actions: [
+        //         new Action('Bite', {
+        //             description: 'Bites the target to do 2 points fo piercing damage',
+        //             type: 'melee',
+        //             range: 1,
+        //             effect: target => target.damage('piercing', 2),
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
+        //         })
+        //     ],
+        //     turnFunction: biteNearestPlayer
+        // }),
+        // new Enemy('Bug E', level, {
+        //     imageUrl: "./assets/bug.png",
+        //     speed: 3,
+        //     size: 'small',
+        //     maxHP: 5,
+        //     defaultLocation: { x: 10, y: 4 },
+        //     actions: [
+        //         new Action('Bite', {
+        //             description: 'Bites the target to do 2 points fo piercing damage',
+        //             type: 'melee',
+        //             range: 1,
+        //             effect: target => target.damage('piercing', 2),
+        //             isValidTarget: (character, target) => character !== target && target instanceof Character
+        //         })
+        //     ],
+        //     turnFunction: biteNearestPlayer
+        // }),
+        new Enemy('Armour Devourer', level, {
+            imageUrl: "./assets/armour-devourer.png",
+            speed: 4,
+            size: 'medium',
+            maxHP: 20,
+            defaultLocation: { x: 8, y: 2 },
             actions: [
                 new Action('Bite', {
-                    description: 'Bites the target to do 2 points fo piercing damage',
+                    description: 'Bites the target fiercely to do 5 points of piercing damage and removes 3 points of armor',
                     type: 'melee',
                     range: 1,
-                    effect: target => target.damage('piercing', 2),
+                    effect: target => {
+                        target.damage('piercing', 5);
+                        if (target.currentArmor && target.currentArmor > 0) target.currentArmor = Math.max(0, target.currentArmor - 3);
+                    },
                     isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ],
             turnFunction: biteNearestPlayer
         }),
-        new Enemy('Bug B', level, {
-            imageUrl: "./assets/bug.png",
-            speed: 3,
-            size: 'small',
-            maxHP: 5,
-            defaultLocation: { x: 7, y: 3 },
-            actions: [
-                new Action('Bite', {
-                    description: 'Bites the target to do 2 points fo piercing damage',
-                    type: 'melee',
-                    range: 1,
-                    effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
-                })
-            ],
-            turnFunction: biteNearestPlayer
-        }),
-        new Enemy('Bug C', level, {
-            imageUrl: "./assets/bug.png",
-            speed: 3,
-            size: 'small',
-            maxHP: 5,
-            defaultLocation: { x: 8, y: 4 },
-            actions: [
-                new Action('Bite', {
-                    description: 'Bites the target to do 2 points fo piercing damage',
-                    type: 'melee',
-                    range: 1,
-                    effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
-                })
-            ],
-            turnFunction: biteNearestPlayer
-        }),
-        new Enemy('Bug D', level, {
-            imageUrl: "./assets/bug.png",
-            speed: 3,
-            size: 'small',
-            maxHP: 5,
-            defaultLocation: { x: 9, y: 4 },
-            actions: [
-                new Action('Bite', {
-                    description: 'Bites the target to do 2 points fo piercing damage',
-                    type: 'melee',
-                    range: 1,
-                    effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
-                })
-            ],
-            turnFunction: biteNearestPlayer
-        }),
-        new Enemy('Bug E', level, {
-            imageUrl: "./assets/bug.png",
-            speed: 3,
-            size: 'small',
-            maxHP: 5,
-            defaultLocation: { x: 10, y: 4 },
-            actions: [
-                new Action('Bite', {
-                    description: 'Bites the target to do 2 points fo piercing damage',
-                    type: 'melee',
-                    range: 1,
-                    effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
-                })
-            ],
-            turnFunction: biteNearestPlayer
-        })
     ])
 
     return level
 }
 
-export default getLevel1;
+export default getLevel2;

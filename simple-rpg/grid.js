@@ -82,6 +82,7 @@ class Grid {
     startPanning(e) {
         // console.log('start dragging');
         if (this.mouseFunction == 'free') {
+            this.canvas.style.cursor = 'var(--cursor-grabbing)';
             this.mouseFunction = 'panning';
             this.dragStart.x = e.clientX / this.cameraZoom - this.cameraOffset.x;
             this.dragStart.y = e.clientY / this.cameraZoom - this.cameraOffset.y;
@@ -91,6 +92,7 @@ class Grid {
     endPanning(e) {
         // console.log('end dragging');
         if (this.mouseFunction == 'panning') {
+            this.canvas.style.cursor = 'var(--cursor-grab)';
             this.mouseFunction = 'free';
             this.lastZoom = this.cameraZoom;
         }
@@ -122,7 +124,6 @@ class Grid {
                 this.tempSelectBox.w,
                 this.tempSelectBox.h,
             );
-            // console.log('a', tempSelectBoxIsValid)
             if (tempSelectBoxIsValid) {
                 this.selectBox = this.tempSelectBox;
             } else {
@@ -136,6 +137,7 @@ class Grid {
     onMouseMove(e) {
         const { x, y, outOfBounds } = this.getCellUnderMouse(e);
         if (this.mouseFunction === 'free' && !outOfBounds) {
+            // console.log({x, y, item: this.occupiedBy[y][x]})
             // unhighlight everything
             for (let placedItem of this.items) {
                 placedItem.unHighlight();
@@ -143,10 +145,10 @@ class Grid {
             // get the item over which the mouse is and highlight it
             const hoveredItem = this.occupiedBy[y][x];
             if (hoveredItem) {
-                this.canvas.style.cursor = 'pointer';
+                this.canvas.style.cursor = 'var(--cursor-pointer)';
                 hoveredItem.highlight()
             }
-            else this.canvas.style.cursor = 'move';
+            else this.canvas.style.cursor = 'var(--cursor-grab)';
         } else if (this.mouseFunction === 'panning') {
             this.cameraOffset.x = e.clientX / this.cameraZoom - this.dragStart.x;
             this.cameraOffset.y = e.clientY / this.cameraZoom - this.dragStart.y;
@@ -156,8 +158,10 @@ class Grid {
             // console.log({ x, y, w, h, v: this.selectBoxValidate(x, y, w, h) });
             if (!outOfBounds && !this.selectBoxIsCanceled() && this.selectBoxIsValid(x, y, w, h)) {
                 this.tempSelectBox = { x, y, w, h };
+                this.canvas.style.cursor = 'var(--cursor-target)';
             } else {
                 this.tempSelectBox = null;
+                this.canvas.style.cursor = 'var(--cursor-not-allowed)';
             }
             // console.log(this.tempSelectBox)
         }
@@ -330,8 +334,11 @@ class Grid {
         this.cellColors[y][x] = color;
     }
 
+    clear() {
+        this.ctx.clearRect(0, 0, this.width * this.cellSize, this.height * this.cellSize);
+    }
+
     draw() {
-        // console.log(this.mouseFunction)
         // set canvas zoom/pan locations
         this.canvas.height = this.canvasHeight;
         this.canvas.width = this.canvasWidth;
