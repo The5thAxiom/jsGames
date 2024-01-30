@@ -55,6 +55,13 @@ class Grid {
         this.canvas.addEventListener('mouseup', e => this.endPanning(e));
         this.canvas.addEventListener('mouseleave', e => this.endPanning(e));
         this.canvas.addEventListener('wheel', e => this.onScroll(e));
+        this.canvas.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            for (let placedItem of this.items) {
+                placedItem.unSelect();
+            }
+            this.mouseFunction = 'free';
+        });
     }
 
     onScroll(e) {
