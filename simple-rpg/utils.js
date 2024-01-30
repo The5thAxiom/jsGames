@@ -1,3 +1,5 @@
+import Player from './gridObjects/player.js';
+
 const id = id => document.getElementById(id);
 
 
@@ -60,6 +62,46 @@ function drawTextWithBox(ctx, text, x, y, {font, textFill, textStroke, boxFill, 
     ctx.restore();
 }
 
+async function attackNearestPlayer(enemy) {
+    const grid = enemy.grid;
+    const originalPos = { x: enemy.x, y: enemy.y };
+    let target = null;
+    let targetPos = {x: -1, y: -1}
+    for (let yi = Math.max(0, enemy.y - enemy.speed); yi <= Math.min(grid.height, enemy.y + enemy.speed); yi++) {
+        if (target) break;
+        for (let xi = Math.max(0, enemy.x - enemy.speed); xi <= Math.min(grid.width, enemy.x + enemy.speed); xi++) {// for each cell in the 
+            if (target) break;
+            // console.log(`${enemy.name} (speed ${enemy.speed}) searching at: ${xi}, ${yi}`);
+            if (!grid.occupiedBy[yi][xi] || grid.occupiedBy[yi][xi] === enemy) {
+                for (let i = Math.max(0, yi - 1); i <= Math.min(grid.height, yi + 1); i++) {
+                    if (target) break;
+                    for (let j = Math.max(0, xi - 1); j <= Math.min(grid.width, xi + 1); j++) {
+                        if (target) break;
+                        const tempTarget = grid.occupiedBy[i][j];
+                        // console.log(`${this.name} checking if ${tempTarget ? tempTarget.name : 'null'} at ${j}, ${i}`);
+                        if (tempTarget && tempTarget instanceof Player && tempTarget.currentHP > 0) {
+                            target = tempTarget;
+                            targetPos.x = xi;
+                            targetPos.y = yi;
+                            // console.log('P.S. it was')
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (target) {
+        grid.moveTo(enemy, targetPos.x, targetPos.y);
+        enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
+        await sleep(250);
+        enemy.remainingActions--;
+        enemy.actions[0].effect(target);
+        console.log(enemy.actions[0].audioUrl)
+        await enemy.actions[0].audio.play();
+        console.log(`${enemy.name} used ${enemy.actions[0].name} on ${target.name}`);
+        enemy.updateStatsDiv();
+    }
+}
 
 const sizeToBlocks = {
     "tiny": 0.5,
@@ -69,4 +111,6 @@ const sizeToBlocks = {
     "huge": 3
 }
 
-export { id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, sizeToBlocks };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+export { id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, sizeToBlocks, attackNearestPlayer, sleep };

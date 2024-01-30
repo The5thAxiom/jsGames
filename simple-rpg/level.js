@@ -1,5 +1,5 @@
 import Grid from "./grid.js";
-import { id } from "./utils.js";
+import { id, sleep} from "./utils.js";
 
 class Level {
     constructor(name, canvas, turnDiv, statsDiv, {mapUrl, width, height, cellSize, walls, winCondition, loseCondition}) {
@@ -119,7 +119,7 @@ class Level {
         this.environmentObjects = environmentObjects;
     }
 
-    newTurn() {
+    async newTurn() {
         if (this.playersTurn) {
             for (let player of this.players) {
                 player.newTurn();
@@ -132,7 +132,8 @@ class Level {
             for (let enemy of this.enemies) {
                 if (enemy.currentHP > 0) {
                     enemy.newTurn();
-                    enemy.takeTurn();
+                    await sleep(500);
+                    await enemy.takeTurn();
                 }
             }
             for (let player of this.players) {

@@ -9,9 +9,9 @@ class Enemy extends Character{
     setTurnFunction(turnFunction) {
         this.turnFunction = this.turnFunction;
     }
-    takeTurn() {
+    async takeTurn() {
         // console.log(`${this.name}'s turn`)
-        this.turnFunction(this);
+        await this.turnFunction(this);
     }
 }
 

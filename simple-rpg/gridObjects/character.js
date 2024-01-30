@@ -184,6 +184,7 @@ class Character extends GridObject{
             }
         }
         if (!actionCanceled) {
+            if (action.audioUrl) await action.audio.play();
             if (action.maxUses) {
                 action.remainingUses--;
             }
@@ -232,7 +233,11 @@ class Character extends GridObject{
             this.x * this.grid.cellSize + (this.width * this.grid.cellSize) / 2, // center horizontally
             (this.y + this.height - 1) * this.grid.cellSize + (this.height + this.grid.cellSize), // below the icon
             {
-                font: '15px Averia Serif Libre'
+                font: '15px Averia Serif Libre',
+                boxFill: this.currentHP === this.maxHP ? 'green'
+                    : this.currentHP / this.maxHP > 0.5 ? 'olive'
+                    : this.currentHP / this.maxHP > 0.25 ? 'red'
+                    : 'maroon'
             }
         );
         // console.log({t: document.timeline.currentTime, ca: this.currentAction !== null, pa: this.potentialAction !== null });

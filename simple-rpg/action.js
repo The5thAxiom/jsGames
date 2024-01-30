@@ -15,6 +15,8 @@ class Action {
         this.targetSize = options.targetSize ?? 1;
         this.maxUses = options.maxUses;
         this.remainingUses = this.maxUses;
+        this.audioUrl = options.audioUrl || './assets/punch.ogg';
+        this.audio = new Audio(this.audioUrl);
     }
 }
 

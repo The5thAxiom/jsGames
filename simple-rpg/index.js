@@ -23,7 +23,6 @@ function nextLevel() {
     currentLevelIndex++;
     currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
     currentLevel.init();
-    currentLevel.init();
 }
 
 function run() {

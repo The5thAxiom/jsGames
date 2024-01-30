@@ -4,45 +4,7 @@ import GridObject from "../gridObjects/gridObject.js";
 import Enemy from "../gridObjects/enemy.js";
 import Player from "../gridObjects/player.js";
 import Action from "../action.js"
-import { gridDistance } from "../utils.js";
-
-function biteNearestPlayer(enemy) {
-    const grid = enemy.grid;
-    const originalPos = { x: enemy.x, y: enemy.y };
-    let target = null;
-    let targetPos = {x: -1, y: -1}
-    for (let yi = Math.max(0, enemy.y - enemy.speed); yi <= Math.min(grid.height, enemy.y + enemy.speed); yi++) {
-        if (target) break;
-        for (let xi = Math.max(0, enemy.x - enemy.speed); xi <= Math.min(grid.width, enemy.x + enemy.speed); xi++) {// for each cell in the 
-            if (target) break;
-            // console.log(`${enemy.name} (speed ${enemy.speed}) searching at: ${xi}, ${yi}`);
-            if (!grid.occupiedBy[yi][xi] || grid.occupiedBy[yi][xi] === enemy) {
-                for (let i = Math.max(0, yi - 1); i <= Math.min(grid.height, yi + 1); i++) {
-                    if (target) break;
-                    for (let j = Math.max(0, xi - 1); j <= Math.min(grid.width, xi + 1); j++) {
-                        if (target) break;
-                        const tempTarget = grid.occupiedBy[i][j];
-                        // console.log(`${this.name} checking if ${tempTarget ? tempTarget.name : 'null'} at ${j}, ${i}`);
-                        if (tempTarget && tempTarget instanceof Player && tempTarget.currentHP > 0) {
-                            target = tempTarget;
-                            targetPos.x = xi;
-                            targetPos.y = yi;
-                            // console.log('P.S. it was')
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (target) {
-        grid.moveTo(enemy, targetPos.x, targetPos.y);
-        enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
-        enemy.remainingActions--;
-        enemy.actions[0].effect(target);
-        console.log(`${enemy.name} used ${enemy.actions[0].name} on ${target.name}`);
-        enemy.updateStatsDiv();
-    }
-}
+import { gridDistance, attackNearestPlayer } from "../utils.js";
 
 function getLevel2(canvas, turnDiv, statsDiv) {
     const level = new Level('Level 2', canvas, turnDiv, statsDiv, {
@@ -172,7 +134,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ],
-        //     turnFunction: biteNearestPlayer
+        //     turnFunction: attackNearestPlayer
         // }),
         // new Enemy('Bug B', level, {
         //     imageUrl: "./assets/bug.png",
@@ -189,7 +151,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ],
-        //     turnFunction: biteNearestPlayer
+        //     turnFunction: attackNearestPlayer
         // }),
         // new Enemy('Bug C', level, {
         //     imageUrl: "./assets/bug.png",
@@ -206,7 +168,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ],
-        //     turnFunction: biteNearestPlayer
+        //     turnFunction: attackNearestPlayer
         // }),
         // new Enemy('Bug D', level, {
         //     imageUrl: "./assets/bug.png",
@@ -223,7 +185,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ],
-        //     turnFunction: biteNearestPlayer
+        //     turnFunction: attackNearestPlayer
         // }),
         // new Enemy('Bug E', level, {
         //     imageUrl: "./assets/bug.png",
@@ -240,7 +202,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         //             isValidTarget: (character, target) => character !== target && target instanceof Character
         //         })
         //     ],
-        //     turnFunction: biteNearestPlayer
+        //     turnFunction: attackNearestPlayer
         // }),
         new Enemy('Armour Devourer', level, {
             imageUrl: "./assets/armour-devourer.png",
@@ -260,7 +222,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     isValidTarget: (character, target) => character !== target && target instanceof Character
                 })
             ],
-            turnFunction: biteNearestPlayer
+            turnFunction: attackNearestPlayer
         }),
     ])
 
