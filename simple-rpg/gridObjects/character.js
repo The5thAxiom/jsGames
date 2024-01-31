@@ -1,8 +1,10 @@
 import GridObject from "./gridObject.js";
 import Action from '../action.js';
-import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox } from "../utils.js";
+import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, playAudio } from "../utils.js";
 
 class Character extends GridObject{
+    static footstepsSound = new Audio('./assets/running-1s.wav')
+
     constructor(name, level, options) {
         super(name, level, options);
         this.speed = options.speed;
@@ -184,7 +186,7 @@ class Character extends GridObject{
             }
         }
         if (!actionCanceled) {
-            if (action.audioUrl) await action.audio.play();
+            await playAudio(action.audio);
             if (action.maxUses) {
                 action.remainingUses--;
             }
@@ -211,6 +213,7 @@ class Character extends GridObject{
             this.remainingMovement -= gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
             console.log(`${this.name} moved from (${this.x},${this.y}) to (${x}, ${y})`);
             this.grid.moveTo(this, x, y);
+            await playAudio(Character.footstepsSound);
         }
         this.grid.resetCellColors();
         this.currentAction = null;

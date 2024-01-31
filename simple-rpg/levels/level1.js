@@ -85,7 +85,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'rangedSingleTarget',
                     range: 4,
                     effect: target => target.damage('magical', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/arcane-bolt.wav'
                 }),
                 new Action('Arcane Blast', {
                     description: 'Shoots a blast of arcane energy at a 2x2 area upto 5 blocks away to do 4 points of magical damage',
@@ -94,6 +95,7 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     targetSize: 2,
                     maxUses: 1,
                     effect: target => target.damage('magical', 4),
+                    audioUrl: './assets/arcane-blast.mp3'
                 })
             ]
         }),
@@ -109,12 +111,14 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'rangedSingleTarget',
                     range: 3,
                     effect: target => target.damage('peircing', 1),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bow.wav'
                 }), new Action('Prayer', {
                     description: 'Sings a soothing prayer for one target upto 4 blocks away, healing them by 2 points of HP',
                     type: 'rangedSingleTarget',
                     range: 4,
-                    effect: target => target.heal('HP', 2)
+                    effect: target => target.heal('HP', 2),
+                    audioUrl: './assets/chant-1s.wav'
                 })
             ]
         }),
@@ -132,7 +136,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer
@@ -149,7 +154,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer
@@ -166,7 +172,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer
@@ -183,7 +190,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer
@@ -200,7 +208,8 @@ function getLevel1(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('piercing', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer

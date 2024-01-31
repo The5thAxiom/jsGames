@@ -68,7 +68,8 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     type: 'melee',
                     range: 1,
                     effect: target => target.damage('slashing', 3),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/sword.ogg'
                 })
             ]
         }),
@@ -84,7 +85,8 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     type: 'rangedSingleTarget',
                     range: 4,
                     effect: target => target.damage('magical', 2),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/arcane-bolt.wav'
                 }),
                 new Action('Arcane Blast', {
                     description: 'Shoots a blast of arcane energy at a 2x2 area upto 5 blocks away to do 4 points of magical damage',
@@ -93,6 +95,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     targetSize: 2,
                     maxUses: 1,
                     effect: target => target.damage('magical', 4),
+                    audioUrl: './assets/arcane-blast.mp3'
                 })
             ]
         }),
@@ -108,102 +111,55 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     type: 'rangedSingleTarget',
                     range: 3,
                     effect: target => target.damage('peircing', 1),
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bow.wav'
                 }), new Action('Prayer', {
                     description: 'Sings a soothing prayer for one target upto 4 blocks away, healing them by 2 points of HP',
                     type: 'rangedSingleTarget',
                     range: 4,
-                    effect: target => target.heal('HP', 2)
+                    effect: target => target.heal('HP', 2),
+                    audioUrl: './assets/chant-1s.wav'
                 })
             ]
         }),
     ]);
     level.setEnemies([
-        // new Enemy('Bug A', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 10, y: 3 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ],
-        //     turnFunction: attackNearestPlayer
-        // }),
-        // new Enemy('Bug B', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 7, y: 3 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ],
-        //     turnFunction: attackNearestPlayer
-        // }),
-        // new Enemy('Bug C', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 8, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ],
-        //     turnFunction: attackNearestPlayer
-        // }),
-        // new Enemy('Bug D', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 9, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ],
-        //     turnFunction: attackNearestPlayer
-        // }),
-        // new Enemy('Bug E', level, {
-        //     imageUrl: "./assets/bug.png",
-        //     speed: 3,
-        //     size: 'small',
-        //     maxHP: 5,
-        //     defaultLocation: { x: 10, y: 4 },
-        //     actions: [
-        //         new Action('Bite', {
-        //             description: 'Bites the target to do 2 points fo piercing damage',
-        //             type: 'melee',
-        //             range: 1,
-        //             effect: target => target.damage('piercing', 2),
-        //             isValidTarget: (character, target) => character !== target && target instanceof Character
-        //         })
-        //     ],
-        //     turnFunction: attackNearestPlayer
-        // }),
+        new Enemy('Bug A', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 10, y: 3 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
+                })
+            ],
+            turnFunction: attackNearestPlayer
+        }),
+        new Enemy('Bug B', level, {
+            imageUrl: "./assets/bug.png",
+            speed: 3,
+            size: 'small',
+            maxHP: 5,
+            defaultLocation: { x: 7, y: 3 },
+            actions: [
+                new Action('Bite', {
+                    description: 'Bites the target to do 2 points fo piercing damage',
+                    type: 'melee',
+                    range: 1,
+                    effect: target => target.damage('piercing', 2),
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
+                })
+            ],
+            turnFunction: attackNearestPlayer
+        }),
         new Enemy('Armour Devourer', level, {
             imageUrl: "./assets/armour-devourer.png",
             speed: 4,
@@ -219,7 +175,8 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                         target.damage('piercing', 5);
                         if (target.currentArmor && target.currentArmor > 0) target.currentArmor = Math.max(0, target.currentArmor - 3);
                     },
-                    isValidTarget: (character, target) => character !== target && target instanceof Character
+                    isValidTarget: (character, target) => character !== target && target instanceof Character,
+                    audioUrl: './assets/bite.mp3'
                 })
             ],
             turnFunction: attackNearestPlayer

@@ -1,3 +1,4 @@
+import Enemy from './gridObjects/enemy.js';
 import Player from './gridObjects/player.js';
 
 const id = id => document.getElementById(id);
@@ -92,13 +93,15 @@ async function attackNearestPlayer(enemy) {
     }
     if (target) {
         grid.moveTo(enemy, targetPos.x, targetPos.y);
-        enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
-        await sleep(250);
-        enemy.remainingActions--;
+        if (targetPos.x !== originalPos.x || targetPos.y !== originalPos.y) {
+            await playAudio(Enemy.footstepsSound);
+            enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
+            await sleep(250);
+        }
+        await playAudio(enemy.actions[0].audio);
         enemy.actions[0].effect(target);
-        console.log(enemy.actions[0].audioUrl)
-        await enemy.actions[0].audio.play();
         console.log(`${enemy.name} used ${enemy.actions[0].name} on ${target.name}`);
+        enemy.remainingActions--;
         enemy.updateStatsDiv();
     }
 }
@@ -113,4 +116,9 @@ const sizeToBlocks = {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-export { id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, sizeToBlocks, attackNearestPlayer, sleep };
+const playAudio = audio => new Promise(r => {
+    audio.play();
+    audio.onended = r;
+})
+
+export { id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, sizeToBlocks, attackNearestPlayer, sleep, playAudio };

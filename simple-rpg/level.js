@@ -98,6 +98,12 @@ class Level {
             this.playersTurn = false;
             this.newTurn();
         })
+
+        if (this.winCondition(this)) {
+            this.hasWon = true;
+        } else if (this.loseCondition(this)) {
+            this.hasLost = true;
+        }
     }
 
     init() {
@@ -132,7 +138,7 @@ class Level {
             for (let enemy of this.enemies) {
                 if (enemy.currentHP > 0) {
                     enemy.newTurn();
-                    await sleep(500);
+                    await sleep(250);
                     await enemy.takeTurn();
                 }
             }
@@ -153,9 +159,9 @@ class Level {
     }
 
     show() {
-        if (this.winCondition(this)) {
+        if (this.hasWon) {
             return 'won';
-        } else if (this.loseCondition(this)) {
+        } else if (this.hasLost) {
             return 'lost';
         } else {
             // console.log({ round: this.roundCount, turn: this.playersTurn ? 'player' : 'enemy' });
