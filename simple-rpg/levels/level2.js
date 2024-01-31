@@ -36,22 +36,22 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         new GridObject('pillar 1', level, {
             height: 1,
             width: 1,
-            defaultLocation: { x: 5, y: 4 }
+            defaultLocation: { x: 5, y: 5 }
         }),
         new GridObject('pillar 2', level, {
             height: 1,
             width: 1,
-            defaultLocation: { x: 12, y: 4 }
+            defaultLocation: { x: 12, y: 5 }
         }),
         new GridObject('pillar 3', level, {
             height: 1,
             width: 1,
-            defaultLocation: { x: 12, y: 8 }
+            defaultLocation: { x: 12, y: 9 }
         }),
         new GridObject('pillar 4', level, {
             height: 1,
             width: 1,
-            defaultLocation: { x: 5, y: 8 }
+            defaultLocation: { x: 5, y: 9 }
         })
     ]);
     level.setPlayers([
@@ -61,7 +61,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             size: 'medium',
             maxHP: 15,
             maxArmor: 15,
-            defaultLocation: { x: 8, y: 7 },
+            defaultLocation: { x: 8, y: 9 },
             actions: [
                 new Action('Sword', {
                     description: 'Slashes a sword at the target to deal 3 points of slashing damage',
@@ -78,7 +78,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 3,
             size: 'medium',
             maxHP: 10,
-            defaultLocation: { x: 9, y: 9 },
+            defaultLocation: { x: 9, y: 11 },
             actions: [
                 new Action('Arcane Bolt', {
                     description: 'Shoots a bolt of arcane energy at the target upto 4 blocks away to do 2 points of magical damage',
@@ -104,7 +104,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 4,
             size: 'medium',
             maxHP: 15,
-            defaultLocation: { x: 8, y: 9 },
+            defaultLocation: { x: 8, y: 11 },
             actions: [
                 new Action('Bow', {
                     description: 'Shoots an arrow at the target upto 3 blocks away to do 1 piercing damage',
@@ -129,7 +129,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 3,
             size: 'small',
             maxHP: 5,
-            defaultLocation: { x: 10, y: 3 },
+            defaultLocation: { x: 7, y: 5 },
             actions: [
                 new Action('Bite', {
                     description: 'Bites the target to do 2 points fo piercing damage',
@@ -147,7 +147,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 3,
             size: 'small',
             maxHP: 5,
-            defaultLocation: { x: 7, y: 3 },
+            defaultLocation: { x: 9, y: 5 },
             actions: [
                 new Action('Bite', {
                     description: 'Bites the target to do 2 points fo piercing damage',
@@ -165,7 +165,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 4,
             size: 'medium',
             maxHP: 20,
-            defaultLocation: { x: 8, y: 2 },
+            defaultLocation: { x: 8, y: 6 },
             actions: [
                 new Action('Bite', {
                     description: 'Bites the target fiercely to do 5 points of piercing damage and removes 3 points of armor',

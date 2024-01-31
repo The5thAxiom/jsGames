@@ -14,15 +14,20 @@ let currentLevel = null;
 function init() {
     levels = [getLevel1, getLevel2];
     currentLevelIndex = 0;
-    currentLevel = levels[0](canvas, turnDiv, statsDiv);
+    currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
     currentLevel.init();
 }
 
 function nextLevel() {
     currentLevel.remove();
     currentLevelIndex++;
-    currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
-    currentLevel.init();
+    if (currentLevelIndex === levels.length) {
+        alert('Congratulations, you have won the game!')
+        init();
+    } else {
+        currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
+        currentLevel.init();
+    }
 }
 
 function run() {
