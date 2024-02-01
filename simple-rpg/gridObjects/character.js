@@ -1,5 +1,6 @@
 import GridObject from "./gridObject.js";
 import Action from '../action.js';
+import Effect from "../Effect.js";
 import {id, gridDistance, gridDistanceBetweenBoxes, drawTextWithBox, playAudio } from "../utils.js";
 
 class Character extends GridObject{
@@ -24,6 +25,7 @@ class Character extends GridObject{
         this.potentialAction = null;
 
         this.enabled = false;
+        this.effects = [];
     }
 
     enable() {
@@ -112,6 +114,26 @@ class Character extends GridObject{
     }
 
     damage(type, value) {
+        // add damage taken effect
+        this.effects.push(new Effect(
+            'damage taken', this.level, {
+                startingCell: { x: this.x, y: this.y },
+                type: 'text',
+                text: `-${value}`,
+                textBoxOptions: {
+                    font: '30px Averia Serif Libre',
+                    boxFill: 'red'
+                },
+                animate: effect => {
+                    if (Date.now() - effect.startingMs < 500) {
+                        effect.currentLocation.y -= 2;
+                    } else {
+                        effect.isCompleted();
+                    }
+                }
+            }
+        ));
+
         if (this.maxArmor && this.currentArmor > 0) {
             if (this.currentArmor > value) {
                 this.currentArmor = Math.max(0, this.currentArmor - value);
@@ -121,6 +143,7 @@ class Character extends GridObject{
                 this.currentArmor = 0;
             }
         }
+
         this.currentHP = Math.max(0, this.currentHP - value);
         if (this.currentHP == 0) {
             this.grid.remove(this);
@@ -130,6 +153,26 @@ class Character extends GridObject{
     
     heal(type, value) {
         if (type == 'HP') {
+            if (this.currentHP < this.maxHP) {
+                this.effects.push(new Effect(
+                    'HP healed', this.level, {
+                        startingCell: { x: this.x, y: this.y },
+                        type: 'text',
+                        text: `+${value}`,
+                        textBoxOptions: {
+                            font: '30px Averia Serif Libre',
+                            boxFill: 'green'
+                        },
+                        animate: effect => {
+                            if (Date.now() - effect.startingMs < 500) {
+                                effect.currentLocation.y -= 2;
+                            } else {
+                                effect.isCompleted();
+                            }
+                        }
+                    }
+                ));
+            }
             this.currentHP = Math.min(this.maxHP, this.currentHP + value);
         } else if (type == 'Armor') {
             this.currentArmor = Math.min(this.maxArmor, this.currentArmor + value);
@@ -272,6 +315,12 @@ class Character extends GridObject{
                 }
             }
         }
+
+        // draw each effect
+        for (let effect of this.effects) {
+            effect.draw();
+        }
+        this.effects = this.effects.filter(e => !e.completed);
     }
 }
 

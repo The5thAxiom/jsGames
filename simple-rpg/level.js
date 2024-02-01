@@ -37,7 +37,8 @@ class Level {
         <div id="title-round">
             <h1 id="game-title"><img src="assets/icon.png" /> Simple-RPG</h1>
             <hr />
-            <h2>Round ${this.roundCount}</h2>
+            <h2>${this.name}</h>
+            <h3>Round ${this.roundCount}</h2>
             <span id="end-turn" class='button'>End Turn</span>
             <hr />
         </div>

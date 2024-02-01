@@ -95,7 +95,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
                     targetSize: 2,
                     maxUses: 1,
                     effect: target => target.damage('magical', 4),
-                    audioUrl: './assets/arcane-blast.mp3'
+                    audioUrl: './assets/arcane-blast.wav'
                 })
             ]
         }),
