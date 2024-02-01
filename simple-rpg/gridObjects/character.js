@@ -85,14 +85,27 @@ class Character extends GridObject{
             textToAdd += "</div>";
             this.statsDiv.innerHTML += textToAdd;
             
-            id('move').addEventListener('click', e => this.moveToSelectedCells(e));
-            id('move').addEventListener('mouseenter', e => { this.potentialAction = 'move'; });
-            id('move').addEventListener('mouseleave', e => { this.potentialAction = null; });
+            id('move').addEventListener('click', e => {
+                if (this.remainingMovement > 0) this.moveToSelectedCells(e)
+            });
+            id('move').addEventListener('mouseenter', e => {
+                if (this.remainingMovement > 0) this.potentialAction = 'move';
+            });
+            id('move').addEventListener('mouseleave', e => {
+                if (this.remainingMovement > 0) this.potentialAction = null;
+            });
+            
             for (let i in this.actions) {
                 const action = this.actions[i];
-                id(`action-${i}`).addEventListener('click', () => this.performAction(i));
-                id(`action-${i}`).addEventListener('mouseenter', () => { this.potentialAction = this.actions[i]; });
-                id(`action-${i}`).addEventListener('mouseleave', () => { this.potentialAction = null; });
+                id(`action-${i}`).addEventListener('click', () => {
+                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.performAction(i)
+                });
+                id(`action-${i}`).addEventListener('mouseenter', () => {
+                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = this.actions[i];
+                });
+                id(`action-${i}`).addEventListener('mouseleave', () => {
+                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = null;
+                });
             }
         }
         if (this.currentAction) {
