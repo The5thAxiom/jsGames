@@ -12,7 +12,7 @@ let currentLevel = null;
 
 function init() {
     levels = [getLevel1, getLevel2];
-    currentLevelIndex = 1;
+    currentLevelIndex = 0;
     currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
     currentLevel.init();
 }
