@@ -1,9 +1,20 @@
+import Grid from "./grid.js";
+import Level from "./level.js";
 import { drawTextWithBox } from "./utils.js";
 
 class Effect {
+    /**
+     * 
+     * @param {string} name 
+     * @param {Level} level 
+     * @param {*} options 
+     */
     constructor(name, level, {startingCell, type, imageUrl, text, textBoxOptions, animate}) {
         this.name = name;
         this.level = level;
+        /**
+         * @type {Grid}
+         */
         this.grid = this.level.grid;
         this.startingCell = startingCell;
         this.type = type;
@@ -32,7 +43,6 @@ class Effect {
 
     draw() {
         if (this.type === 'text') {
-            console.log(this.text)
             drawTextWithBox(this.grid.ctx, this.text, this.currentLocation.x, this.currentLocation.y, this.textBoxOptions);
         } else if (this.type === 'image') {
             // this.grid.ctx.save();

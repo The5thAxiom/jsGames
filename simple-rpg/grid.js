@@ -5,8 +5,17 @@ class Grid {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
 
+        /**
+         * @type {number}
+         */
         this.height = height;
+        /**
+         * @type {number}
+         */
         this.width = width;
+        /**
+         * @type {number}
+         */
         this.cellSize = window.innerWidth / this.width;
 
         this.walls = walls;
@@ -258,7 +267,14 @@ class Grid {
     }
 
     reset() {
+        /**
+         * @type {GridObject[]}
+         */
         this.items = [];
+        
+        /**
+         * @type {GridObject[][]}
+         */
         this.loc = [];
         for (let yi = 0; yi < this.height; yi++) {
             let temp = [];
@@ -267,6 +283,10 @@ class Grid {
             }
             this.loc.push(temp);
         }
+
+        /**
+         * @type {GridObject[][]}
+         */
         this.occupiedBy = [];
         for (let yi = 0; yi < this.height; yi++) {
             let temp = [];
@@ -276,7 +296,7 @@ class Grid {
             }
             this.occupiedBy.push(temp);
         }
-    this.resetCellColors();
+        this.resetCellColors();
     }
 
     canPlace(item, x, y) {

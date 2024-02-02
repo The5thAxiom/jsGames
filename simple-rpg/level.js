@@ -13,7 +13,7 @@ class Level {
 
         this.winCondition = winCondition;
         this.loseCondition = loseCondition;
-
+        
         this.grid = new Grid(this.canvas, {
             height: this.height,
             width: this.width,

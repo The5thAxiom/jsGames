@@ -129,7 +129,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
             speed: 3,
             size: 'small',
             maxHP: 5,
-            defaultLocation: { x: 7, y: 5 },
+            defaultLocation: { x: 7, y: 5 }, // 7, 5
             actions: [
                 new Action('Bite', {
                     description: 'Bites the target to do 2 points fo piercing damage',
@@ -163,7 +163,7 @@ function getLevel2(canvas, turnDiv, statsDiv) {
         new Enemy('Armour Devourer', level, {
             imageUrl: "./assets/armour-devourer.png",
             speed: 4,
-            size: 'medium',
+            size: 'large',
             maxHP: 20,
             defaultLocation: { x: 8, y: 6 },
             actions: [

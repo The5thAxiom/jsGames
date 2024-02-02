@@ -1,3 +1,4 @@
+import Action from './action.js';
 import Enemy from './gridObjects/enemy.js';
 import Player from './gridObjects/player.js';
 
@@ -39,7 +40,7 @@ function drawTextWithBox(ctx, text, x, y, {font, textFill, textStroke, boxFill, 
     const textMetrics = ctx.measureText(text)
     const textWidth = textMetrics.width;
     const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
-    const textPadding = 2;
+    const textPadding = 3;
     // draw box
     ctx.fillStyle = boxFill;
     ctx.strokeStyle = boxStroke;
@@ -63,41 +64,62 @@ function drawTextWithBox(ctx, text, x, y, {font, textFill, textStroke, boxFill, 
     ctx.restore();
 }
 
+/**
+ * 
+ * @param {Enemy} enemy 
+ * @param {number} x 
+ * @param {number} y 
+ * @param {Action} action 
+ * @returns {Player}
+ */
+function playerInRange(enemy, x, y, action) {
+    const grid = enemy.grid;
+    let target = null;
+    
+    for (let i = Math.max(0, y - action.range); i <= Math.min(grid.height, y + (enemy.height - 1) + action.range); i++) {
+        for (let j = Math.max(0, x - action.range); j <= Math.min(grid.width, x + (enemy.width - 1) + action.range); j++) {
+            const tempTarget = grid.occupiedBy[i][j];
+            if (tempTarget && tempTarget instanceof Player && tempTarget.currentHP > 0) {
+                target = tempTarget;
+            }
+        }
+    }
+    return target;
+}
+
+/**
+ * 
+ * @param {Enemy} enemy 
+ * @returns {Promise<void>}
+ */
 async function attackNearestPlayer(enemy) {
     const grid = enemy.grid;
     const originalPos = { x: enemy.x, y: enemy.y };
-    let target = null;
-    let targetPos = {x: -1, y: -1}
-    for (let yi = Math.max(0, enemy.y - enemy.speed); yi <= Math.min(grid.height, enemy.y + enemy.speed); yi++) {
-        if (target) break;
-        for (let xi = Math.max(0, enemy.x - enemy.speed); xi <= Math.min(grid.width, enemy.x + enemy.speed); xi++) {// for each cell in the 
+    let newPos = null;
+    
+    let target = playerInRange(enemy, enemy.x, enemy.y, enemy.actions[0]);
+    if (!target) {
+        for (let yi = Math.max(0, enemy.y - enemy.speed); yi <= Math.min(grid.height, enemy.y + enemy.speed); yi++) {
             if (target) break;
-            // console.log(`${enemy.name} (speed ${enemy.speed}) searching at: ${xi}, ${yi}`);
-            if (!grid.occupiedBy[yi][xi] || grid.occupiedBy[yi][xi] === enemy) {
-                for (let i = Math.max(0, yi - 1); i <= Math.min(grid.height, yi + 1); i++) {
-                    if (target) break;
-                    for (let j = Math.max(0, xi - 1); j <= Math.min(grid.width, xi + 1); j++) {
-                        if (target) break;
-                        const tempTarget = grid.occupiedBy[i][j];
-                        // console.log(`${this.name} checking if ${tempTarget ? tempTarget.name : 'null'} at ${j}, ${i}`);
-                        if (tempTarget && tempTarget instanceof Player && tempTarget.currentHP > 0) {
-                            target = tempTarget;
-                            targetPos.x = xi;
-                            targetPos.y = yi;
-                            // console.log('P.S. it was')
-                        }
+            for (let xi = Math.max(0, enemy.x - enemy.speed); xi <= Math.min(grid.width, enemy.x + enemy.speed); xi++) {
+                if (target) break;
+                if (grid.canPlace(enemy, xi, yi)) {
+                    target = playerInRange(enemy, xi, yi, enemy.actions[0]);
+                    if (target) {
+                        newPos = { x: xi, y: yi };
                     }
                 }
             }
         }
     }
     if (target) {
-        grid.moveTo(enemy, targetPos.x, targetPos.y);
-        if (targetPos.x !== originalPos.x || targetPos.y !== originalPos.y) {
+        if (newPos && !(newPos.x === originalPos.x && newPos.y === originalPos.y)) {
+            console.log(`${this.name} moved from (${this.x},${this.y}) to (${newPos.x}, ${newPos.y})`);
+            grid.moveTo(enemy, newPos.x, newPos.y);
             await playAudio(Enemy.footstepsSound);
-            enemy.remainingMovement -= gridDistance(targetPos.x, targetPos.y, originalPos.x, originalPos.y);
-            await sleep(250);
+            enemy.remainingMovement -= gridDistance(newPos.x, newPos.y, originalPos.x, originalPos.y);
         }
+        await sleep(250);
         await playAudio(enemy.actions[0].audio);
         enemy.actions[0].effect(target);
         console.log(`${enemy.name} used ${enemy.actions[0].name} on ${target.name}`);
@@ -114,8 +136,18 @@ const sizeToBlocks = {
     "huge": 3
 }
 
+/**
+ * 
+ * @param {number} ms 
+ * @returns {Promise<void>}
+ */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+/**
+ * 
+ * @param {HTMLAudioElement} audio 
+ * @returns {Promise<void>}
+ */
 const playAudio = audio => new Promise(r => {
     audio.play();
     audio.onended = r;

@@ -1,9 +1,23 @@
-import {sizeToBlocks } from "../utils.js";
+import Grid from "../grid.js";
+import Level from "../level.js";
+import { sizeToBlocks } from "../utils.js";
 
 class GridObject {
+    /**
+     * 
+     * @param {string} name 
+     * @param {Level} level 
+     * @param {*} options 
+     */
     constructor(name, level, options) {
         this.name = name;
+        /**
+         * @type {Level}
+         */
         this.level = level;
+        /**
+         * @type {Grid}
+         */
         this.grid = level.grid;
         this.statsDiv = level.statsDiv;
 

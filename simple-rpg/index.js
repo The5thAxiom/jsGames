@@ -6,14 +6,13 @@ const statsDiv = id('stats-div');
 const turnDiv = id('turn-div');
 const canvas = id('game');
 
-
 let levels = null;
 let currentLevelIndex = 0;
 let currentLevel = null;
 
 function init() {
     levels = [getLevel1, getLevel2];
-    currentLevelIndex = 0;
+    currentLevelIndex = 1;
     currentLevel = levels[currentLevelIndex](canvas, turnDiv, statsDiv);
     currentLevel.init();
 }
