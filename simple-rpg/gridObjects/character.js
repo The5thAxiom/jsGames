@@ -80,33 +80,45 @@ class Character extends GridObject{
                     title="${action.description}"
                     class='button ${(action.maxUses && action.remainingUses === 0) || this.remainingActions === 0 || (this.currentAction && this.currentAction !== action) ? 'disabled' : ''}'
                     id="action-${i}"
-                >${action.name}${!!action.maxUses ? `\n${action.remainingUses}/${action.maxUses}`: ''}</span>`
+                >${action.name}${!!action.maxUses ? `\n${action.remainingUses}/${action.maxUses}` : ''}</span>`
             }
             textToAdd += "</div>";
             this.statsDiv.innerHTML += textToAdd;
             
-            id('move').addEventListener('click', e => {
-                if (this.remainingMovement > 0) this.moveToSelectedCells(e)
-            });
-            id('move').addEventListener('mouseenter', e => {
-                if (this.remainingMovement > 0) this.potentialAction = 'move';
-            });
-            id('move').addEventListener('mouseleave', e => {
-                if (this.remainingMovement > 0) this.potentialAction = null;
-            });
+            setTimeout(() => {
+                id('move').addEventListener('click', e => {
+                    if (this.currentAction === 'move') {
+                        this.currentAction = null;
+                        this.updateStatsDiv();
+                    } else if (this.remainingMovement > 0) {
+                        this.currentAction = 'move';
+                        this.moveToSelectedCells(e)
+                    }
+                });
+
+                id('move').addEventListener('mouseenter', e => {
+                    if (this.remainingMovement > 0) this.potentialAction = 'move';
+                });
+                id('move').addEventListener('mouseleave', e => {
+                    if (this.remainingMovement > 0) this.potentialAction = null;
+                });
             
-            for (let i in this.actions) {
-                const action = this.actions[i];
-                id(`action-${i}`).addEventListener('click', () => {
-                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.performAction(i)
-                });
-                id(`action-${i}`).addEventListener('mouseenter', () => {
-                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = this.actions[i];
-                });
-                id(`action-${i}`).addEventListener('mouseleave', () => {
-                    if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = null;
-                });
-            }
+                for (let i in this.actions) {
+                    const action = this.actions[i];
+                    id(`action-${i}`).addEventListener('click', () => {
+                        if (this.currentAction === action) {
+                            this.currentAction = null;
+                            this.updateStatsDiv();
+                        } else if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.performAction(i)
+                    });
+                    id(`action-${i}`).addEventListener('mouseenter', () => {
+                        if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = this.actions[i];
+                    });
+                    id(`action-${i}`).addEventListener('mouseleave', () => {
+                        if ((action.maxUses ? action.remainingUses > 0 : true) && this.remainingActions > 0) this.potentialAction = null;
+                    });
+                }
+            }, 0)
         }
         if (this.currentAction) {
             textToAdd = `
@@ -118,10 +130,12 @@ class Character extends GridObject{
                     <span id='cancel-current-action' class='button'>Cancel</span>
                 </div>`;
             this.statsDiv.innerHTML += textToAdd;
-            id('cancel-current-action').addEventListener('click', () => {
-                this.currentAction = null;
-                this.updateStatsDiv();
-            })
+            setTimeout(() => {
+                id('cancel-current-action').addEventListener('click', () => {
+                    this.currentAction = null;
+                    this.updateStatsDiv();
+                })
+            }, 0)
         }
         this.level.updateTurnDiv();
     }
@@ -262,6 +276,7 @@ class Character extends GridObject{
             const distance = gridDistanceBetweenBoxes(this.x, this.y, this.width, this.height, x, y, w, h);
             return this.grid.canPlace(this, x, y) && distance <= this.remainingMovement;
         }, () => {
+            // console.log(`move cancel: ${this.currentAction}`)
             return !this.currentAction || this.currentAction !== 'move';
         })
         if (!canceled) {
