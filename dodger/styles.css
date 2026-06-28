@@ -9,9 +9,10 @@ h1 {
     text-align: center;
     z-index: 100;
     display:block;
-    /* color: #00ff00; */
+    color: #00ff00;
     margin: 0;
     padding: 0;
+    -webkit-text-stroke: 0.5px black;
 }
 
 #back {
@@ -20,7 +21,8 @@ h1 {
     left: 10px;
     z-index: 100;
     display:block;
-    /* color: #00ff00; */
+    color: #00ff00;
+    -webkit-text-stroke: 0.5px black;
 }
 
 #credit {
@@ -30,4 +32,6 @@ h1 {
     left: auto;
     right: auto;
     z-index: 100;
+    color: #00ff00;
+    -webkit-text-stroke: 0.5px black;
 }
